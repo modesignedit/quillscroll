@@ -4,7 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, User } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Calendar, User, Globe2, Instagram, Twitter, Music2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
 
@@ -12,6 +13,12 @@ interface Profile {
   id: string;
   display_name: string;
   bio: string | null;
+  avatar_url: string | null;
+  website_url: string | null;
+  twitter_handle: string | null;
+  instagram_handle: string | null;
+  tiktok_handle: string | null;
+  created_at?: string;
 }
 
 interface PostSummary {
@@ -32,7 +39,7 @@ export default function AuthorPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, display_name, bio')
+        .select('id, display_name, bio, avatar_url, website_url, twitter_handle, instagram_handle, tiktok_handle, created_at')
         .eq('id', id)
         .single();
 
@@ -84,23 +91,102 @@ export default function AuthorPage() {
             </div>
           ) : profile ? (
             <>
-              <header className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                    Author
-                  </p>
-                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                    {profile.display_name}
-                  </h1>
+              <header className="space-y-6">
+                <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-b from-background via-background to-muted/60 p-6 md:p-8">
+                  <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <Avatar className="h-16 w-16 md:h-20 md:w-20 border border-border/60 shadow-sm">
+                        {profile.avatar_url ? (
+                          <AvatarImage src={profile.avatar_url} alt={profile.display_name} />
+                        ) : (
+                          <AvatarFallback>
+                            {profile.display_name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="space-y-2">
+                        <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-muted-foreground">
+                          Author
+                        </p>
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                          {profile.display_name}
+                        </h1>
+                        {profile.bio && (
+                          <p className="text-sm md:text-base text-muted-foreground max-w-xl leading-relaxed">
+                            {profile.bio}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start gap-3 text-xs text-muted-foreground md:items-end md:text-sm">
+                      <div className="flex flex-wrap items-center gap-4">
+                        {posts && (
+                          <span>
+                            {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+                          </span>
+                        )}
+                        {profile.created_at && (
+                          <span>
+                            Joined{' '}
+                            {new Date(profile.created_at).toLocaleString(undefined, {
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {profile.website_url && (
+                          <a
+                            href={profile.website_url.startsWith('http') ? profile.website_url : `https://${profile.website_url}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-background hover:text-foreground"
+                          >
+                            <Globe2 className="h-3.5 w-3.5" />
+                            <span>Website</span>
+                          </a>
+                        )}
+                        {profile.twitter_handle && (
+                          <a
+                            href={`https://twitter.com/${profile.twitter_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-background hover:text-foreground"
+                          >
+                            <Twitter className="h-3.5 w-3.5" />
+                            <span>@{profile.twitter_handle.replace(/^@/, '')}</span>
+                          </a>
+                        )}
+                        {profile.instagram_handle && (
+                          <a
+                            href={`https://instagram.com/${profile.instagram_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-background hover:text-foreground"
+                          >
+                            <Instagram className="h-3.5 w-3.5" />
+                            <span>@{profile.instagram_handle.replace(/^@/, '')}</span>
+                          </a>
+                        )}
+                        {profile.tiktok_handle && (
+                          <a
+                            href={`https://www.tiktok.com/@${profile.tiktok_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-background hover:text-foreground"
+                          >
+                            <Music2 className="h-3.5 w-3.5" />
+                            <span>@{profile.tiktok_handle.replace(/^@/, '')}</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {profile.bio && (
-                  <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                    {profile.bio}
-                  </p>
-                )}
                 {posts && posts.length > 0 && (
-                  <p className="text-xs text-muted-foreground uppercase tracking-[0.2em]">
-                    {posts.length} {posts.length === 1 ? 'Post' : 'Posts'}
+                  <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
+                    Posts by {profile.display_name}
                   </p>
                 )}
               </header>
