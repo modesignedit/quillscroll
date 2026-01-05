@@ -31,16 +31,17 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { PlusCircle, Edit, Trash2, FileText, Globe2, Twitter, Instagram, Music2 } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, FileText, Globe2, Twitter, Instagram, Music2, CheckCircle2, Circle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-
+import { seedLovableDemoPosts } from '@/lib/demoPosts';
 interface DashboardPost {
   id: string;
   title: string;
   is_published: boolean;
   updated_at: string;
+  slug: string;
 }
 
 export default function Dashboard() {
@@ -50,6 +51,7 @@ export default function Dashboard() {
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [isSeedingDemo, setIsSeedingDemo] = useState(false);
 
   const {
     data: posts,
@@ -62,7 +64,7 @@ export default function Dashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, title, is_published, updated_at')
+        .select('id, title, is_published, updated_at, slug')
         .eq('author_id', user!.id)
         .order('updated_at', { ascending: false });
 
@@ -100,6 +102,11 @@ export default function Dashboard() {
   const draftPosts = totalPosts - publishedPosts;
   const lastUpdatedAt = posts?.[0]?.updated_at ?? null;
 
+  const hasCompletedProfile = !!profile && (profile.display_name?.trim().length ?? 0) >= 2;
+  const hasWrittenFirstPost = totalPosts > 0;
+  const hasLoadedDemoPosts = (posts ?? []).some((post) => post.slug?.startsWith('lovable-demo-'));
+  const allOnboardingDone = hasCompletedProfile && hasWrittenFirstPost && hasLoadedDemoPosts;
+
   const visiblePosts = [...(posts ?? [])]
     .filter((post) => {
       if (statusFilter === 'published') return post.is_published;
@@ -127,6 +134,28 @@ export default function Dashboard() {
     },
   });
 
+  const handleSeedDemoPosts = async () => {
+    if (!user) return;
+
+    try {
+      setIsSeedingDemo(true);
+      const result = await seedLovableDemoPosts(user.id);
+
+      if (result.alreadySeeded) {
+        toast.success('Demo posts already loaded');
+      } else {
+        toast.success('Demo posts added');
+        queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
+      }
+    } catch (error) {
+      console.error('Error seeding demo posts from dashboard', error);
+      toast.error('Error loading demo posts');
+    } finally {
+      setIsSeedingDemo(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="container px-3 sm:px-4 py-6 md:py-10">
@@ -149,6 +178,107 @@ export default function Dashboard() {
               New Post
             </Button>
           </div>
+
+          {!allOnboardingDone && (
+            <Card className="border-dashed border-border/70 bg-card/40 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold tracking-tight sm:text-base">
+                  Get set up in a few steps
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                  Complete these quick tasks so your profile and posts look great to readers.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2">
+                  {/* Complete profile */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      {hasCompletedProfile ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium sm:text-sm">Complete your profile</span>
+                        <span className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                          Add your name and public links so readers know who you are.
+                        </span>
+                      </div>
+                    </div>
+                    {!hasCompletedProfile && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/settings')}
+                        className="rounded-full px-3 text-xs"
+                      >
+                        Edit profile
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Write first post */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      {hasWrittenFirstPost ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium sm:text-sm">Write your first post</span>
+                        <span className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                          Draft and publish something small to test your writing flow.
+                        </span>
+                      </div>
+                    </div>
+                    {!hasWrittenFirstPost && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/new')}
+                        className="rounded-full px-3 text-xs"
+                      >
+                        Start writing
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Load demo posts */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      {hasLoadedDemoPosts ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium sm:text-sm">Load demo posts</span>
+                        <span className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                          Pull in a few example posts from lovable.dev to see the layout filled out.
+                        </span>
+                      </div>
+                    </div>
+                    {!hasLoadedDemoPosts && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={isSeedingDemo}
+                        onClick={handleSeedDemoPosts}
+                        className="rounded-full px-3 text-xs"
+                      >
+                        {isSeedingDemo ? 'Loading…' : 'Load demos'}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
 
           {isProfileLoading ? (
             <Card className="border-border/70 bg-card/50 shadow-sm">
