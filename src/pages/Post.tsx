@@ -29,7 +29,13 @@ export default function Post() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const { data: post, isLoading } = useQuery({
+  const {
+    data: post,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['post', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -83,6 +89,34 @@ export default function Post() {
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-64 w-full" />
+            </div>
+          ) : isError ? (
+            <div className="py-12 text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                We couldnt load this post. Please check your connection and try again.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/')}
+                  className="rounded-full px-4"
+                >
+                  Back to feed
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => refetch()}
+                  className="rounded-full px-4"
+                >
+                  Try again
+                </Button>
+              </div>
+              {/* Optional debug info:
+              <p className="text-[0.7rem] text-muted-foreground/70">
+                {error instanceof Error ? error.message : 'Unexpected error occurred.'}
+              </p>
+              */}
             </div>
           ) : post ? (
             <article className="space-y-6">
@@ -153,8 +187,16 @@ export default function Post() {
               </div>
             </article>
           ) : (
-            <div className="py-12 text-center">
+            <div className="py-12 text-center space-y-4">
               <p className="text-muted-foreground">Post not found</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/')}
+                className="rounded-full px-4"
+              >
+                Back to feed
+              </Button>
             </div>
           )}
         </div>

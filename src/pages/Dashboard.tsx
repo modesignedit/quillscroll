@@ -51,7 +51,13 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
-  const { data: posts, isLoading } = useQuery({
+  const {
+    data: posts,
+    isLoading,
+    isError: isPostsError,
+    error: postsError,
+    refetch: refetchPosts,
+  } = useQuery({
     queryKey: ['user-posts', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -66,7 +72,13 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+    error: profileError,
+    refetch: refetchProfile,
+  } = useQuery({
     queryKey: ['my-profile', user?.id],
     enabled: !!user,
     queryFn: async () => {
@@ -146,6 +158,31 @@ export default function Dashboard() {
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-3 w-48" />
                 </div>
+              </CardContent>
+            </Card>
+          ) : isProfileError ? (
+            <Card className="border-border/70 bg-card/50 shadow-sm">
+              <CardContent className="flex flex-col items-start justify-between gap-3 px-3 py-3 sm:flex-row sm:items-center sm:px-4 sm:py-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">We couldnt load your profile.</p>
+                  <p className="text-[0.8rem] text-muted-foreground">
+                    Please check your connection and try again.
+                  </p>
+                  {/* Optional debug info:
+                  <p className="text-[0.7rem] text-muted-foreground/70">
+                    {profileError instanceof Error ? profileError.message : 'Unexpected error.'}
+                  </p>
+                  */}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetchProfile()}
+                  className="rounded-full px-4"
+                >
+                  Retry
+                </Button>
               </CardContent>
             </Card>
           ) : profile ? (
@@ -333,6 +370,26 @@ export default function Dashboard() {
                 {[1, 2, 3].map((i) => (
                   <Skeleton key={i} className="h-16 w-full" />
                 ))}
+              </div>
+            ) : isPostsError ? (
+              <div className="py-10 text-center space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  We couldnt load your posts. Please check your connection and try again.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetchPosts()}
+                  className="rounded-full px-4"
+                >
+                  Retry
+                </Button>
+                {/* Optional debug info:
+                <p className="text-[0.7rem] text-muted-foreground/70">
+                  {postsError instanceof Error ? postsError.message : 'Unexpected error.'}
+                </p>
+                */}
               </div>
             ) : posts && posts.length > 0 ? (
               visiblePosts.length > 0 ? (
