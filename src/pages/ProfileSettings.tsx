@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { Check } from "lucide-react";
 
 const profileSchema = z.object({
   display_name: z.string().trim().min(2, "Display name is too short").max(80, "Display name is too long"),
@@ -61,6 +62,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export default function ProfileSettings() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [justSaved, setJustSaved] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["my-profile", user?.id],
@@ -127,6 +129,7 @@ export default function ProfileSettings() {
     },
     onSuccess: () => {
       toast.success("Profile updated");
+      setJustSaved(true);
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
       if (user?.id) {
         queryClient.invalidateQueries({ queryKey: ["author-profile", user.id] });
@@ -140,6 +143,15 @@ export default function ProfileSettings() {
   const onSubmit = (values: ProfileFormValues) => {
     updateMutation.mutate(values);
   };
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (justSaved) {
+        setJustSaved(false);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, justSaved]);
 
   return (
     <Layout>
@@ -205,19 +217,30 @@ export default function ProfileSettings() {
                     <FormField
                       control={form.control}
                       name="bio"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Bio</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Short bio that appears on your author page."
-                              className="min-h-[80px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      render={({ field }) => {
+                        const bioValue = form.watch("bio") ?? "";
+                        const bioLength = bioValue.length;
+
+                        return (
+                          <FormItem>
+                            <FormLabel>Bio</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Short bio that appears on your author page."
+                                className="min-h-[80px]"
+                                {...field}
+                              />
+                            </FormControl>
+                            <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                              <span>Keep it short and punchy so it looks great in the author hero.</span>
+                              <span>
+                                {bioLength} / 280
+                              </span>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
                     />
 
                     <FormField
@@ -229,6 +252,9 @@ export default function ProfileSettings() {
                           <FormControl>
                             <Input placeholder="yourdomain.com or https://yourdomain.com" {...field} />
                           </FormControl>
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            Shown as a globe icon on your author page and opens in a new tab.
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -244,6 +270,9 @@ export default function ProfileSettings() {
                             <FormControl>
                               <Input placeholder="@handle" {...field} />
                             </FormControl>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              We’ll link to twitter.com/yourhandle and show a Twitter chip on your author page.
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -257,6 +286,9 @@ export default function ProfileSettings() {
                             <FormControl>
                               <Input placeholder="@handle" {...field} />
                             </FormControl>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              We’ll link to instagram.com/yourhandle and show an Instagram chip.
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -270,15 +302,24 @@ export default function ProfileSettings() {
                             <FormControl>
                               <Input placeholder="@handle" {...field} />
                             </FormControl>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              We’ll link to tiktok.com/@yourhandle and show a TikTok-style chip.
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
 
-                    <CardFooter className="mt-4 flex justify-end px-0">
+                    <CardFooter className="mt-4 flex items-center justify-end gap-3 px-0">
+                      {justSaved && !updateMutation.isPending && (
+                        <div className="flex items-center gap-1 text-xs text-emerald-500">
+                          <Check className="h-3 w-3" />
+                          <span>Saved</span>
+                        </div>
+                      )}
                       <Button type="submit" disabled={updateMutation.isPending} className="hover-scale">
-                        Save changes
+                        {updateMutation.isPending ? "Saving..." : "Save changes"}
                       </Button>
                     </CardFooter>
                   </form>
