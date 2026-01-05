@@ -127,45 +127,66 @@ export default function PostEditor() {
           <Button
             variant="ghost"
             onClick={() => navigate('/dashboard')}
-            className="mb-6"
+            className="mb-6 text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to dashboard
           </Button>
 
-          <form className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+          <form className="space-y-8">
+            <div className="space-y-3">
+              <Label
+                htmlFor="title"
+                className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                Title
+              </Label>
               <Input
                 id="title"
-                placeholder="Give your post a great title..."
-                className="text-2xl font-bold"
+                placeholder="Give your post a scroll-stopping title..."
+                className="border-0 border-b border-border bg-transparent px-0 text-2xl md:text-4xl font-semibold tracking-tight focus-visible:ring-0 focus-visible:border-primary rounded-none"
                 {...register('title')}
               />
               {errors.title && (
-                <p className="text-sm text-destructive">{errors.title.message}</p>
+                <p className="text-xs md:text-sm text-destructive">{errors.title.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="excerpt">Excerpt (optional)</Label>
+            <div className="space-y-3">
+              <Label
+                htmlFor="excerpt"
+                className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                Excerpt (optional)
+              </Label>
               <Textarea
                 id="excerpt"
-                placeholder="A brief summary of your post..."
+                placeholder="A quick vibe-check summary for the feed..."
                 rows={2}
+                className="text-sm md:text-base leading-relaxed resize-none"
                 {...register('excerpt')}
               />
               {errors.excerpt && (
-                <p className="text-sm text-destructive">{errors.excerpt.message}</p>
+                <p className="text-xs md:text-sm text-destructive">{errors.excerpt.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label>Content</Label>
+            <div className="space-y-3">
+              <Label className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                Content
+              </Label>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="write">Write</TabsTrigger>
-                  <TabsTrigger value="preview">
+                <TabsList className="grid w-full grid-cols-2 rounded-full bg-muted/60 p-1">
+                  <TabsTrigger
+                    value="write"
+                    className="rounded-full text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  >
+                    Write
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="preview"
+                    className="rounded-full text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  >
                     <Eye className="mr-2 h-4 w-4" />
                     Preview
                   </TabsTrigger>
@@ -173,23 +194,25 @@ export default function PostEditor() {
 
                 <TabsContent value="write" className="mt-4">
                   <Textarea
-                    placeholder="Write your post in Markdown..."
+                    placeholder="Write your post in Markdown... headings, lists, code — all welcome."
                     rows={20}
-                    className="font-mono"
+                    className="font-mono text-sm md:text-base leading-relaxed"
                     {...register('content_markdown')}
                   />
                   {errors.content_markdown && (
-                    <p className="text-sm text-destructive mt-2">
+                    <p className="mt-2 text-xs md:text-sm text-destructive">
                       {errors.content_markdown.message}
                     </p>
                   )}
                 </TabsContent>
 
                 <TabsContent value="preview" className="mt-4">
-                  <Card>
+                  <Card className="border-border/60 shadow-sm">
                     <CardContent className="pt-6">
-                      <div className="prose prose-lg dark:prose-invert max-w-none">
-                        <ReactMarkdown>{currentContent || '*No content yet*'}</ReactMarkdown>
+                      <div className="post-prose text-sm md:text-base">
+                        <ReactMarkdown>
+                          {currentContent || '*No content yet*'}
+                        </ReactMarkdown>
                       </div>
                     </CardContent>
                   </Card>
@@ -197,12 +220,13 @@ export default function PostEditor() {
               </Tabs>
             </div>
 
-            <div className="flex gap-4 justify-end">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleSubmit((data) => onSubmit(data, false))}
                 disabled={isSubmitting}
+                className="justify-center sm:w-auto text-sm md:text-base"
               >
                 <Save className="mr-2 h-4 w-4" />
                 Save Draft
@@ -211,6 +235,7 @@ export default function PostEditor() {
                 type="button"
                 onClick={handleSubmit((data) => onSubmit(data, true))}
                 disabled={isSubmitting}
+                className="justify-center sm:w-auto text-sm md:text-base shadow-sm"
               >
                 Publish
               </Button>

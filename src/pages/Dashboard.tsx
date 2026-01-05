@@ -82,25 +82,35 @@ export default function Dashboard() {
     <Layout>
       <div className="container py-8 md:py-12">
         <div className="max-w-6xl mx-auto space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold">Dashboard</h1>
-              <p className="text-muted-foreground mt-2">
-                Manage your blog posts
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-1">
+              <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
+                Dashboard
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Track your posts, drafts, and publishing flow.
               </p>
             </div>
-            <Button onClick={() => navigate('/dashboard/new')} size="lg">
+            <Button
+              onClick={() => navigate('/dashboard/new')}
+              size="lg"
+              className="mt-2 sm:mt-0 shadow-sm"
+            >
               <PlusCircle className="mr-2 h-5 w-5" />
               New Post
             </Button>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Posts</CardTitle>
-              <CardDescription>
-                {posts?.length || 0} {posts?.length === 1 ? 'post' : 'posts'} total
-              </CardDescription>
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <div>
+                <CardTitle className="text-base md:text-lg font-semibold tracking-tight">
+                  Your Posts
+                </CardTitle>
+                <CardDescription className="text-xs md:text-sm text-muted-foreground">
+                  {posts?.length || 0} {posts?.length === 1 ? 'post' : 'posts'} total
+                </CardDescription>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoading ? (
@@ -110,50 +120,61 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : posts && posts.length > 0 ? (
-                <div className="rounded-md border">
+                <div className="rounded-xl border border-border/70 overflow-hidden bg-card/60 backdrop-blur">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Last Updated</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                      <TableRow className="border-b border-border/60">
+                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                          Title
+                        </TableHead>
+                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                          Status
+                        </TableHead>
+                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                          Last Updated
+                        </TableHead>
+                        <TableHead className="text-right text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                          Actions
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {posts.map((post) => (
-                        <TableRow key={post.id}>
-                          <TableCell className="font-medium">{post.title}</TableCell>
-                          <TableCell>
+                        <TableRow key={post.id} className="border-b border-border/40 last:border-0">
+                          <TableCell className="py-4 align-middle text-sm md:text-base font-medium">
+                            {post.title}
+                          </TableCell>
+                          <TableCell className="py-4 align-middle">
                             <span
-                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                 post.is_published
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'bg-muted text-muted-foreground'
                               }`}
                             >
                               {post.is_published ? 'Published' : 'Draft'}
                             </span>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">
+                          <TableCell className="py-4 align-middle text-xs md:text-sm text-muted-foreground">
                             {formatDistanceToNow(new Date(post.updated_at), {
                               addSuffix: true,
                             })}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="py-4 align-middle text-right">
                             <div className="flex justify-end gap-2">
                               <Button
                                 variant="ghost"
-                                size="sm"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
                                 onClick={() => navigate(`/dashboard/edit/${post.id}`)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
-                                size="sm"
+                                size="icon"
                                 onClick={() => setDeletePostId(post.id)}
-                                className="text-destructive hover:text-destructive"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
