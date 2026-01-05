@@ -12,6 +12,7 @@ import Post from "./pages/Post";
 import Dashboard from "./pages/Dashboard";
 import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
+import AuthorPage from "./pages/AuthorPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/post/:id" element={<Post />} />
+              <Route path="/author/:id" element={<AuthorPage />} />
               <Route
                 path="/dashboard"
                 element={

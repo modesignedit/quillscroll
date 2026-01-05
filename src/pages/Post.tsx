@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowLeft, Calendar, User, Edit } from 'lucide-react';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
+import { useReadingProgress } from '@/hooks/use-reading-progress';
 
 interface Post {
   id: string;
@@ -16,6 +17,7 @@ interface Post {
   content_markdown: string;
   published_at: string | null;
   author_id: string;
+  category: string | null;
   tags: string[];
   profiles: {
     display_name: string;
@@ -38,6 +40,7 @@ export default function Post() {
           content_markdown,
           published_at,
           author_id,
+          category,
           tags,
           profiles (
             display_name
@@ -54,9 +57,16 @@ export default function Post() {
 
   const isAuthor = user?.id === post?.author_id;
   const readingTimeMinutes = post ? getReadingTimeMinutes(post.content_markdown) : null;
+  const progress = useReadingProgress('post-content');
 
   return (
     <Layout>
+      <div className="fixed inset-x-0 top-[56px] z-30 h-[2px] bg-border/40 md:top-[64px]">
+        <div
+          className="h-full bg-primary transition-[width] duration-150 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
       <div className="container py-8 md:py-12">
         <div className="max-w-3xl mx-auto">
           <Button
@@ -78,14 +88,36 @@ export default function Post() {
             <article className="space-y-6">
               <header className="space-y-4">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-2 min-w-0">
+                  <div className="space-y-3 min-w-0">
+                    {post.category && (
+                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                        {post.category}
+                      </span>
+                    )}
                     <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight break-words">
                       {post.title}
                     </h1>
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {post.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.7rem] font-medium uppercase tracking-wide text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <User className="h-4 w-4" />
-                        {post.profiles.display_name}
+                        <Link
+                          to={`/author/${post.author_id}`}
+                          className="underline underline-offset-4 decoration-border/60 hover:decoration-primary"
+                        >
+                          {post.profiles.display_name}
+                        </Link>
                       </span>
                       {post.published_at && (
                         <span className="flex items-center gap-1">
@@ -115,7 +147,7 @@ export default function Post() {
                 </div>
               </header>
 
-              <div className="post-prose">
+              <div id="post-content" className="post-prose">
                 <ReactMarkdown
                   components={{
                     h1: ({ node, ...props }) => (
@@ -153,11 +185,11 @@ export default function Post() {
                     code: ({ node, className, children, ...props }) => {
                       const { inline } = props as { inline?: boolean };
                       const baseClasses =
-                        "font-mono text-sm rounded bg-muted px-1.5 py-0.5 text-foreground";
+                        'font-mono text-sm rounded bg-muted px-1.5 py-0.5 text-foreground';
 
                       if (inline) {
                         return (
-                          <code className={`${baseClasses} ${className ?? ""}`} {...props}>
+                          <code className={`${baseClasses} ${className ?? ''}`} {...props}>
                             {children}
                           </code>
                         );
@@ -165,7 +197,7 @@ export default function Post() {
 
                       return (
                         <pre className="my-6 rounded-lg border bg-muted px-4 py-3 overflow-x-auto text-sm md:text-base">
-                          <code className={className ?? ""} {...props}>
+                          <code className={className ?? ''} {...props}>
                             {children}
                           </code>
                         </pre>
