@@ -22,6 +22,7 @@ const postSchema = z.object({
   excerpt: z.string().max(300, 'Excerpt too long').optional(),
   content_markdown: z.string().min(10, 'Content must be at least 10 characters'),
   tags: z.string().max(200, 'Tags too long').optional(),
+  category: z.string().max(80, 'Category too long').optional(),
 });
 
 type PostFormData = z.infer<typeof postSchema>;
@@ -67,6 +68,7 @@ export default function PostEditor() {
       setValue('excerpt', existingPost.excerpt || '');
       setValue('content_markdown', existingPost.content_markdown);
       setValue('tags', Array.isArray(existingPost.tags) ? existingPost.tags.join(', ') : '');
+      setValue('category', existingPost.category || '');
     }
   }, [existingPost, setValue]);
 
@@ -86,6 +88,8 @@ export default function PostEditor() {
             .map((tag) => tag.trim())
             .filter(Boolean)
         : [];
+      const category = data.category?.trim() || null;
+
       const postData = {
         title: data.title,
         excerpt: data.excerpt || null,
@@ -95,6 +99,7 @@ export default function PostEditor() {
         is_published: data.is_published,
         published_at: data.is_published ? new Date().toISOString() : null,
         tags: tagsArray,
+        category,
       };
 
       if (isEditMode) {
@@ -177,6 +182,24 @@ export default function PostEditor() {
               />
               {errors.excerpt && (
                 <p className="text-xs md:text-sm text-destructive">{errors.excerpt.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label
+                htmlFor="category"
+                className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                Category (optional)
+              </Label>
+              <Input
+                id="category"
+                placeholder="Essays, Tech, Life, Design..."
+                className="text-sm md:text-base leading-relaxed"
+                {...register('category')}
+              />
+              {errors.category && (
+                <p className="text-xs md:text-sm text-destructive">{errors.category.message}</p>
               )}
             </div>
 

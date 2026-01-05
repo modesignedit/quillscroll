@@ -17,6 +17,7 @@ export type Database = {
       posts: {
         Row: {
           author_id: string
+          category: string | null
           content_markdown: string
           created_at: string
           excerpt: string | null
@@ -30,6 +31,7 @@ export type Database = {
         }
         Insert: {
           author_id: string
+          category?: string | null
           content_markdown: string
           created_at?: string
           excerpt?: string | null
@@ -43,6 +45,7 @@ export type Database = {
         }
         Update: {
           author_id?: string
+          category?: string | null
           content_markdown?: string
           created_at?: string
           excerpt?: string | null
