@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Layout } from '@/components/Layout';
 import { Link } from 'react-router-dom';
@@ -35,7 +36,7 @@ export default function Index() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: posts, isLoading } = useQuery({
+  const { data: posts, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -199,7 +200,29 @@ export default function Index() {
             )}
           </div>
 
-          {isLoading ? (
+          {isError ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+                <p className="text-sm text-muted-foreground">
+                  We couldnt load the latest posts. Please check your connection and try again.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetch()}
+                  className="rounded-full px-4"
+                >
+                  Try again
+                </Button>
+                {/* Optional debug info:
+                <p className="text-[0.7rem] text-muted-foreground/70">
+                  {error instanceof Error ? error.message : 'Unexpected error occurred.'}
+                </p>
+                */}
+              </CardContent>
+            </Card>
+          ) : isLoading ? (
             <div className="grid gap-4 md:grid-cols-2">
               {[1, 2, 3, 4].map((i) => (
                 <Card key={i}>
