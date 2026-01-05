@@ -14,6 +14,7 @@ import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
 import AuthorPage from "./pages/AuthorPage";
 import ProfileSettings from "./pages/ProfileSettings";
+import AdminFirecrawlDashboard from "./pages/AdminFirecrawlDashboard";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <ProfileSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/firecrawl"
+                element={
+                  <ProtectedRoute>
+                    <AdminFirecrawlDashboard />
                   </ProtectedRoute>
                 }
               />
