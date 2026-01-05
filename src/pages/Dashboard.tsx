@@ -139,39 +139,39 @@ export default function Dashboard() {
           </div>
 
           {isProfileLoading ? (
-            <Card className="border-border/60 bg-card/60 shadow-sm">
-              <CardContent className="flex items-center gap-4 py-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2 flex-1">
+            <Card className="border-border/70 bg-card/50 shadow-sm">
+              <CardContent className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+                <Skeleton className="h-11 w-11 rounded-full sm:h-12 sm:w-12" />
+                <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-3 w-48" />
                 </div>
               </CardContent>
             </Card>
           ) : profile ? (
-            <Card className="border-border/60 bg-card/60 shadow-sm">
-              <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12 border border-border/60 shadow-sm">
+            <Card className="border-border/70 bg-card/50 shadow-sm">
+              <CardContent className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <Avatar className="h-11 w-11 border border-border/60 shadow-sm sm:h-12 sm:w-12">
                     {profile.avatar_url ? (
                       <AvatarImage
                         src={profile.avatar_url}
                         alt={profile.display_name || user?.email || 'Author avatar'}
                       />
                     ) : (
-                      <AvatarFallback className="bg-primary/10 text-sm font-medium uppercase">
+                      <AvatarFallback className="bg-primary/10 text-xs font-medium uppercase sm:text-sm">
                         {(profile.display_name || user?.email || '?').charAt(0)}
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  <div className="space-y-1">
+                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
                       You appear as
                     </p>
-                    <p className="text-base font-semibold leading-tight">
+                    <p className="text-sm font-semibold leading-tight sm:text-base">
                       {profile.display_name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[0.7rem] text-muted-foreground sm:text-xs">
                       This is how readers see you on your author page and posts.
                     </p>
                   </div>
@@ -217,7 +217,7 @@ export default function Dashboard() {
 
                     if (!href || !label || !Icon) {
                       return (
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-[0.7rem] text-muted-foreground sm:text-xs">
                           No public links yet.{' '}
                           <button
                             type="button"
@@ -231,26 +231,28 @@ export default function Dashboard() {
                     }
 
                     return (
-                      <div className="flex flex-col items-start gap-1 text-xs sm:items-end">
-                        <span className="uppercase tracking-[0.16em] text-muted-foreground">
+                      <div className="flex flex-col items-start gap-1 text-[0.7rem] text-muted-foreground sm:items-end sm:text-xs">
+                        <span className="uppercase tracking-[0.16em]">
                           Primary link
                         </span>
                         <a
                           href={href}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/60 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background"
+                          className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-[0.7rem] font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-background hover:text-primary sm:text-xs"
                         >
                           <Icon className="h-3.5 w-3.5" />
-                          <span>{label}</span>
+                          <span className="truncate max-w-[180px] sm:max-w-[220px]">
+                            {label}
+                          </span>
                         </a>
                       </div>
                     );
                   })()}
                 </div>
-               </CardContent>
-             </Card>
-           ) : null}
+              </CardContent>
+            </Card>
+          ) : null}
 
           {!isLoading && posts && posts.length > 0 && (
             <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
