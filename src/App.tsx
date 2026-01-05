@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
 import AuthorPage from "./pages/AuthorPage";
+import ProfileSettings from "./pages/ProfileSettings";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <PostEditor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <ProfileSettings />
                   </ProtectedRoute>
                 }
               />
