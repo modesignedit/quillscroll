@@ -73,12 +73,12 @@ export default function Post() {
           ) : post ? (
             <article className="space-y-6">
               <header className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-2 min-w-0">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight break-words">
                       {post.title}
                     </h1>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <User className="h-4 w-4" />
                         {post.profiles.display_name}
@@ -96,6 +96,7 @@ export default function Post() {
                   {isAuthor && (
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => navigate(`/dashboard/edit/${post.id}`)}
                     >
                       <Edit className="mr-2 h-4 w-4" />
@@ -105,8 +106,66 @@ export default function Post() {
                 </div>
               </header>
 
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
+              <div className="post-prose">
+                <ReactMarkdown
+                  components={{
+                    h1: ({ node, ...props }) => (
+                      <h1 className="text-3xl md:text-4xl font-bold tracking-tight mt-8 mb-4" {...props} />
+                    ),
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mt-8 mb-3" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3 className="text-xl md:text-2xl font-semibold mt-6 mb-3" {...props} />
+                    ),
+                    h4: ({ node, ...props }) => (
+                      <h4 className="text-lg md:text-xl font-semibold mt-4 mb-2" {...props} />
+                    ),
+                    p: ({ node, ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
+                    ul: ({ node, ...props }) => (
+                      <ul className="my-4 list-disc pl-5 space-y-2" {...props} />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <ol className="my-4 list-decimal pl-5 space-y-2" {...props} />
+                    ),
+                    li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
+                    a: ({ node, ...props }) => (
+                      <a
+                        className="font-medium underline underline-offset-4 text-primary"
+                        {...props}
+                      />
+                    ),
+                    blockquote: ({ node, ...props }) => (
+                      <blockquote
+                        className="border-l-4 border-muted-foreground/40 pl-4 italic text-muted-foreground my-6"
+                        {...props}
+                      />
+                    ),
+                    code: ({ node, className, children, ...props }) => {
+                      const { inline } = props as { inline?: boolean };
+                      const baseClasses =
+                        "font-mono text-sm rounded bg-muted px-1.5 py-0.5 text-foreground";
+
+                      if (inline) {
+                        return (
+                          <code className={`${baseClasses} ${className ?? ""}`} {...props}>
+                            {children}
+                          </code>
+                        );
+                      }
+
+                      return (
+                        <pre className="my-6 rounded-lg border bg-muted px-4 py-3 overflow-x-auto text-sm md:text-base">
+                          <code className={className ?? ""} {...props}>
+                            {children}
+                          </code>
+                        </pre>
+                      );
+                    },
+                  }}
+                >
+                  {post.content_markdown}
+                </ReactMarkdown>
               </div>
             </article>
           ) : (
