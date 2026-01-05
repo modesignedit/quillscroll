@@ -83,13 +83,9 @@ export default function Index() {
           )
         : true;
 
-      const matchesTag = activeTag
-        ? post.tags && post.tags.includes(activeTag)
-        : true;
+      const matchesTag = activeTag ? post.tags && post.tags.includes(activeTag) : true;
 
-      const matchesCategory = activeCategory
-        ? post.category === activeCategory
-        : true;
+      const matchesCategory = activeCategory ? post.category === activeCategory : true;
 
       return matchesSearch && matchesTag && matchesCategory;
     });
@@ -98,12 +94,12 @@ export default function Index() {
   return (
     <Layout>
       <div className="container px-3 sm:px-4 py-6 sm:py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="space-y-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+        <div className="mx-auto max-w-4xl space-y-8">
+          <div className="space-y-3 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
               Latest Posts
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-sm text-muted-foreground md:text-base">
               Discover stories, thinking, and expertise from writers on any topic.
             </p>
           </div>
@@ -131,7 +127,7 @@ export default function Index() {
                       onClick={() => setActiveCategory(null)}
                       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
                         activeCategory === null
-                          ? 'bg-primary text-primary-foreground border-primary'
+                          ? 'border-primary bg-primary text-primary-foreground'
                           : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
                       }`}
                     >
@@ -148,7 +144,7 @@ export default function Index() {
                         }
                         className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
                           activeCategory === category
-                            ? 'bg-primary text-primary-foreground border-primary'
+                            ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
                         }`}
                       >
@@ -168,7 +164,7 @@ export default function Index() {
                       onClick={() => setActiveTag(null)}
                       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
                         activeTag === null
-                          ? 'bg-primary text-primary-foreground border-primary'
+                          ? 'border-primary bg-primary text-primary-foreground'
                           : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
                       }`}
                     >
@@ -183,7 +179,7 @@ export default function Index() {
                         }
                         className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
                           activeTag === tag
-                            ? 'bg-primary text-primary-foreground border-primary'
+                            ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
                         }`}
                       >
@@ -197,32 +193,32 @@ export default function Index() {
           </div>
 
           {isLoading ? (
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {[1, 2, 3, 4].map((i) => (
                 <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+                  <CardHeader className="space-y-2 px-3 py-3 md:px-4 md:py-4">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
                   </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20 w-full" />
+                  <CardContent className="px-3 pb-3 pt-0 md:px-4 md:pb-4">
+                    <Skeleton className="h-16 w-full" />
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : filteredPosts && filteredPosts.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {filteredPosts.map((post) => (
                 <Link key={post.id} to={`/post/${post.id}`}>
-                  <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-1">
-                    <CardHeader>
+                  <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <CardHeader className="space-y-2 px-3 py-3 md:px-4 md:py-4">
                       {post.category && (
-                        <span className="mb-2 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                        <span className="mb-1 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                           {post.category}
                         </span>
                       )}
                       {post.tags && post.tags.length > 0 && (
-                        <div className="mb-2 flex flex-wrap gap-1.5">
+                        <div className="mb-1 flex flex-wrap gap-1.5">
                           {post.tags.map((tag) => (
                             <span
                               key={tag}
@@ -233,8 +229,10 @@ export default function Index() {
                           ))}
                         </div>
                       )}
-                      <CardTitle className="line-clamp-2">{post.title}</CardTitle>
-                      <CardDescription className="flex flex-wrap items-center gap-3 text-xs">
+                      <CardTitle className="line-clamp-2 text-sm font-semibold md:text-base">
+                        {post.title}
+                      </CardTitle>
+                      <CardDescription className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground md:text-xs">
                         <span className="flex items-center gap-1">
                           <User className="h-3 w-3" />
                           {post.profiles.display_name}
@@ -247,14 +245,16 @@ export default function Index() {
                             })}
                           </span>
                         )}
-                        <span className="text-[0.7rem] uppercase tracking-wide text-muted-foreground">
+                        <span className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">
                           {getReadingTimeMinutes(post.content_markdown)} min read
                         </span>
                       </CardDescription>
                     </CardHeader>
                     {post.excerpt && (
-                      <CardContent>
-                        <p className="text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                      <CardContent className="px-3 pb-3 pt-0 md:px-4 md:pb-4">
+                        <p className="line-clamp-3 text-[0.8rem] text-muted-foreground md:text-sm">
+                          {post.excerpt}
+                        </p>
                       </CardContent>
                     )}
                   </Card>
@@ -264,10 +264,12 @@ export default function Index() {
           ) : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <p className="text-muted-foreground mb-4">No posts found. Try a different vibe.</p>
+                <p className="mb-4 text-muted-foreground">
+                  No posts found. Try a different vibe.
+                </p>
                 <Link
                   to="/auth"
-                  className="text-primary hover:underline font-medium"
+                  className="font-medium text-primary hover:underline"
                 >
                   Sign up to write the first one →
                 </Link>
