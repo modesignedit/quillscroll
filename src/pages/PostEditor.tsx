@@ -21,6 +21,7 @@ const postSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
   excerpt: z.string().max(300, 'Excerpt too long').optional(),
   content_markdown: z.string().min(10, 'Content must be at least 10 characters'),
+  tags: z.string().max(200, 'Tags too long').optional(),
 });
 
 type PostFormData = z.infer<typeof postSchema>;
@@ -65,6 +66,7 @@ export default function PostEditor() {
       setValue('title', existingPost.title);
       setValue('excerpt', existingPost.excerpt || '');
       setValue('content_markdown', existingPost.content_markdown);
+      setValue('tags', Array.isArray(existingPost.tags) ? existingPost.tags.join(', ') : '');
     }
   }, [existingPost, setValue]);
 
@@ -78,6 +80,12 @@ export default function PostEditor() {
   const saveMutation = useMutation({
     mutationFn: async (data: PostFormData & { is_published: boolean }) => {
       const slug = createSlug(data.title);
+      const tagsArray = data.tags
+        ? data.tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : [];
       const postData = {
         title: data.title,
         excerpt: data.excerpt || null,
@@ -86,6 +94,7 @@ export default function PostEditor() {
         author_id: user!.id,
         is_published: data.is_published,
         published_at: data.is_published ? new Date().toISOString() : null,
+        tags: tagsArray,
       };
 
       if (isEditMode) {
@@ -168,6 +177,27 @@ export default function PostEditor() {
               />
               {errors.excerpt && (
                 <p className="text-xs md:text-sm text-destructive">{errors.excerpt.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label
+                htmlFor="tags"
+                className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                Tags (optional)
+              </Label>
+              <Input
+                id="tags"
+                placeholder="design, hot-takes, personal, ..."
+                className="text-sm md:text-base leading-relaxed"
+                {...register('tags')}
+              />
+              <p className="text-[0.7rem] text-muted-foreground">
+                Comma-separated. Keep them short & vibe-y.
+              </p>
+              {errors.tags && (
+                <p className="text-xs md:text-sm text-destructive">{errors.tags.message}</p>
               )}
             </div>
 

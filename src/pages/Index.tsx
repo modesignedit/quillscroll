@@ -14,6 +14,7 @@ interface Post {
   excerpt: string | null;
   content_markdown: string;
   published_at: string | null;
+  tags: string[];
   profiles: {
     display_name: string;
   };
@@ -31,6 +32,7 @@ export default function Index() {
           excerpt,
           content_markdown,
           published_at,
+          tags,
           profiles (
             display_name
           )
@@ -76,6 +78,18 @@ export default function Index() {
                 <Link key={post.id} to={`/post/${post.id}`}>
                   <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="mb-2 flex flex-wrap gap-1.5">
+                          {post.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <CardTitle className="line-clamp-2">{post.title}</CardTitle>
                       <CardDescription className="flex flex-wrap items-center gap-3 text-xs">
                         <span className="flex items-center gap-1">

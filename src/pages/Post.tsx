@@ -16,6 +16,7 @@ interface Post {
   content_markdown: string;
   published_at: string | null;
   author_id: string;
+  tags: string[];
   profiles: {
     display_name: string;
   };
@@ -37,6 +38,7 @@ export default function Post() {
           content_markdown,
           published_at,
           author_id,
+          tags,
           profiles (
             display_name
           )

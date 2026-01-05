@@ -24,6 +24,7 @@ export type Database = {
           is_published: boolean
           published_at: string | null
           slug: string
+          tags: string[]
           title: string
           updated_at: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           is_published?: boolean
           published_at?: string | null
           slug: string
+          tags?: string[]
           title: string
           updated_at?: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           is_published?: boolean
           published_at?: string | null
           slug?: string
+          tags?: string[]
           title?: string
           updated_at?: string
         }
