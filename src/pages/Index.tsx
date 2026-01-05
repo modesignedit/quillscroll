@@ -109,7 +109,7 @@ export default function Index() {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search posts by title, vibe, or content..."
-                className="pl-9 text-sm md:text-base"
+                className="h-9 rounded-full border-border/60 bg-muted/60 pl-9 pr-3 text-sm placeholder:text-muted-foreground/70 shadow-sm focus-visible:ring-1 md:text-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
