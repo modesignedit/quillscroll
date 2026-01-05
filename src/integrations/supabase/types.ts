@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      firecrawl_usage_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          function_name: string
+          id: string
+          request_query: string | null
+          request_url: string | null
+          status_code: number | null
+          success: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          function_name: string
+          id?: string
+          request_query?: string | null
+          request_url?: string | null
+          status_code?: number | null
+          success?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          function_name?: string
+          id?: string
+          request_query?: string | null
+          request_url?: string | null
+          status_code?: number | null
+          success?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string

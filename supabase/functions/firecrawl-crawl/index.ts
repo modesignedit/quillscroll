@@ -5,6 +5,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_MAX_REQUESTS = 20;
+const RATE_LIMIT_WINDOW_SECONDS = 60;
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -38,7 +42,57 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('Authenticated user:', claimsData.user.id);
+    const userId = claimsData.user.id;
+    console.log('Authenticated user:', userId);
+
+    // Service role client for rate limiting and logging
+    const serviceSupabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    // Check rate limit
+    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_SECONDS * 1000).toISOString();
+    const { count, error: countError } = await serviceSupabase
+      .from('firecrawl_usage_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', windowStart);
+
+    if (countError) {
+      console.error('Error checking rate limit:', countError.message);
+    }
+
+    const currentCount = count || 0;
+    if (currentCount >= RATE_LIMIT_MAX_REQUESTS) {
+      console.warn(`Rate limit exceeded for user ${userId}: ${currentCount}/${RATE_LIMIT_MAX_REQUESTS}`);
+      
+      // Log the rate-limited attempt
+      await serviceSupabase.from('firecrawl_usage_logs').insert({
+        user_id: userId,
+        function_name: 'crawl',
+        success: false,
+        error_message: 'Rate limit exceeded',
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Rate limit exceeded. Please wait before making more requests.',
+          retryAfter: RATE_LIMIT_WINDOW_SECONDS,
+        }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Retry-After': String(RATE_LIMIT_WINDOW_SECONDS),
+            'X-RateLimit-Limit': String(RATE_LIMIT_MAX_REQUESTS),
+            'X-RateLimit-Remaining': '0',
+          },
+        },
+      );
+    }
 
     const { url, options } = await req.json();
 
@@ -85,6 +139,16 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
 
+    // Log usage
+    await serviceSupabase.from('firecrawl_usage_logs').insert({
+      user_id: userId,
+      function_name: 'crawl',
+      request_url: formattedUrl,
+      status_code: response.status,
+      success: response.ok,
+      error_message: !response.ok ? (data.error || `Request failed with status ${response.status}`) : null,
+    });
+
     if (!response.ok) {
       console.error('Firecrawl API error:', data);
       return new Response(
@@ -95,7 +159,12 @@ Deno.serve(async (req) => {
 
     console.log('Crawl started successfully');
     return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'X-RateLimit-Limit': String(RATE_LIMIT_MAX_REQUESTS),
+        'X-RateLimit-Remaining': String(RATE_LIMIT_MAX_REQUESTS - currentCount - 1),
+      },
     });
   } catch (error) {
     console.error('Error crawling:', error);
