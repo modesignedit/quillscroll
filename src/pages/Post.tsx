@@ -68,11 +68,11 @@ export default function Post() {
         />
       </div>
       <div className="container px-3 sm:px-4 py-6 sm:py-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="mx-auto max-w-3xl">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="mb-6"
+            className="mb-5 px-0 text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to feed
@@ -80,21 +80,21 @@ export default function Post() {
 
           {isLoading ? (
             <div className="space-y-6">
-              <Skeleton className="h-12 w-3/4" />
+              <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-64 w-full" />
             </div>
           ) : post ? (
             <article className="space-y-6">
               <header className="space-y-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-3 min-w-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 space-y-3">
                     {post.category && (
                       <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
                         {post.category}
                       </span>
                     )}
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight break-words">
+                    <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
                       {post.title}
                     </h1>
                     {post.tags && post.tags.length > 0 && (
@@ -109,7 +109,7 @@ export default function Post() {
                         ))}
                       </div>
                     )}
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground md:text-sm">
                       <span className="flex items-center gap-1">
                         <User className="h-4 w-4" />
                         <Link
@@ -128,7 +128,7 @@ export default function Post() {
                         </span>
                       )}
                       {readingTimeMinutes && (
-                        <span className="text-xs md:text-sm text-muted-foreground">
+                        <span className="text-[0.7rem] uppercase tracking-wide text-muted-foreground md:text-xs">
                           {readingTimeMinutes} min read
                         </span>
                       )}
@@ -139,6 +139,7 @@ export default function Post() {
                       variant="outline"
                       size="sm"
                       onClick={() => navigate(`/dashboard/edit/${post.id}`)}
+                      className="shrink-0 text-xs md:text-sm"
                     >
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
@@ -148,69 +149,11 @@ export default function Post() {
               </header>
 
               <div id="post-content" className="post-prose">
-                <ReactMarkdown
-                  components={{
-                    h1: ({ node, ...props }) => (
-                      <h1 className="text-3xl md:text-4xl font-bold tracking-tight mt-8 mb-4" {...props} />
-                    ),
-                    h2: ({ node, ...props }) => (
-                      <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mt-8 mb-3" {...props} />
-                    ),
-                    h3: ({ node, ...props }) => (
-                      <h3 className="text-xl md:text-2xl font-semibold mt-6 mb-3" {...props} />
-                    ),
-                    h4: ({ node, ...props }) => (
-                      <h4 className="text-lg md:text-xl font-semibold mt-4 mb-2" {...props} />
-                    ),
-                    p: ({ node, ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
-                    ul: ({ node, ...props }) => (
-                      <ul className="my-4 list-disc pl-5 space-y-2" {...props} />
-                    ),
-                    ol: ({ node, ...props }) => (
-                      <ol className="my-4 list-decimal pl-5 space-y-2" {...props} />
-                    ),
-                    li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
-                    a: ({ node, ...props }) => (
-                      <a
-                        className="font-medium underline underline-offset-4 text-primary"
-                        {...props}
-                      />
-                    ),
-                    blockquote: ({ node, ...props }) => (
-                      <blockquote
-                        className="border-l-4 border-muted-foreground/40 pl-4 italic text-muted-foreground my-6"
-                        {...props}
-                      />
-                    ),
-                    code: ({ node, className, children, ...props }) => {
-                      const { inline } = props as { inline?: boolean };
-                      const baseClasses =
-                        'font-mono text-sm rounded bg-muted px-1.5 py-0.5 text-foreground';
-
-                      if (inline) {
-                        return (
-                          <code className={`${baseClasses} ${className ?? ''}`} {...props}>
-                            {children}
-                          </code>
-                        );
-                      }
-
-                      return (
-                        <pre className="my-6 rounded-lg border bg-muted px-4 py-3 overflow-x-auto text-sm md:text-base">
-                          <code className={className ?? ''} {...props}>
-                            {children}
-                          </code>
-                        </pre>
-                      );
-                    },
-                  }}
-                >
-                  {post.content_markdown}
-                </ReactMarkdown>
+                <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
               </div>
             </article>
           ) : (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <p className="text-muted-foreground">Post not found</p>
             </div>
           )}
