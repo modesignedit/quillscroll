@@ -67,7 +67,7 @@ export default function Post() {
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="container py-8 md:py-12">
+      <div className="container px-3 sm:px-4 py-6 sm:py-8">
         <div className="max-w-3xl mx-auto">
           <Button
             variant="ghost"

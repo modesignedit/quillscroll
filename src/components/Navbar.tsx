@@ -22,8 +22,8 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div className="container flex h-14 items-center justify-between px-3 sm:px-4">
         <Link to="/" className="flex items-center gap-2 font-bold text-xl">
           <BookOpen className="h-6 w-6" />
           <span>Pulse</span>
@@ -35,7 +35,7 @@ export function Navbar() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full border border-border/60 bg-background/60 hover:bg-background">
                   <Avatar className="h-10 w-10">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getInitials(user.email || 'U')}

@@ -69,7 +69,7 @@ export default function AuthorPage() {
 
   return (
     <Layout>
-      <div className="container py-8 md:py-12">
+      <div className="container px-3 sm:px-4 py-6 sm:py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {isLoading ? (
             <div className="space-y-6">
