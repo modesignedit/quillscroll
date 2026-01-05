@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowLeft, Calendar, User, Edit } from 'lucide-react';
+import { getReadingTimeMinutes } from '@/lib/readingTime';
 
 interface Post {
   id: string;
@@ -50,6 +51,7 @@ export default function Post() {
   });
 
   const isAuthor = user?.id === post?.author_id;
+  const readingTimeMinutes = post ? getReadingTimeMinutes(post.content_markdown) : null;
 
   return (
     <Layout>
@@ -89,6 +91,11 @@ export default function Post() {
                           {formatDistanceToNow(new Date(post.published_at), {
                             addSuffix: true,
                           })}
+                        </span>
+                      )}
+                      {readingTimeMinutes && (
+                        <span className="text-xs md:text-sm text-muted-foreground">
+                          {readingTimeMinutes} min read
                         </span>
                       )}
                     </div>
