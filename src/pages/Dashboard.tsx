@@ -48,6 +48,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['user-posts', user?.id],
@@ -85,6 +87,18 @@ export default function Dashboard() {
   const publishedPosts = posts?.filter((post) => post.is_published)?.length ?? 0;
   const draftPosts = totalPosts - publishedPosts;
   const lastUpdatedAt = posts?.[0]?.updated_at ?? null;
+
+  const visiblePosts = [...(posts ?? [])]
+    .filter((post) => {
+      if (statusFilter === 'published') return post.is_published;
+      if (statusFilter === 'draft') return !post.is_published;
+      return true;
+    })
+    .sort((a, b) => {
+      const aTime = new Date(a.updated_at).getTime();
+      const bTime = new Date(b.updated_at).getTime();
+      return sortOrder === 'desc' ? bTime - aTime : aTime - bTime;
+    });
 
   const deleteMutation = useMutation({
     mutationFn: async (postId: string) => {
@@ -275,8 +289,8 @@ export default function Dashboard() {
              </div>
            )}
 
-           <Card className="border-border/60 shadow-sm">
-            <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base md:text-lg font-semibold tracking-tight">
                   Your Posts
@@ -285,15 +299,41 @@ export default function Dashboard() {
                   {posts?.length || 0} {posts?.length === 1 ? 'post' : 'posts'} total
                 </CardDescription>
               </div>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-16 w-full" />
-                  ))}
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span className="uppercase tracking-[0.16em]">Status</span>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as 'all' | 'published' | 'draft')}
+                    className="rounded-md border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="all">All</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Drafts</option>
+                  </select>
                 </div>
-              ) : posts && posts.length > 0 ? (
+                <div className="flex items-center gap-2">
+                  <span className="uppercase tracking-[0.16em]">Sort</span>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
+                    className="rounded-md border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="desc">Newest first</option>
+                    <option value="asc">Oldest first</option>
+                  </select>
+                </div>
+              </div>
+            </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            ) : posts && posts.length > 0 ? (
+              visiblePosts.length > 0 ? (
                 <div className="rounded-xl border border-border/70 overflow-hidden bg-card/60 backdrop-blur">
                   <Table>
                     <TableHeader>
@@ -313,7 +353,7 @@ export default function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {posts.map((post) => (
+                      {visiblePosts.map((post) => (
                         <TableRow key={post.id} className="border-b border-border/40 last:border-0">
                           <TableCell className="py-4 align-middle text-sm md:text-base font-medium">
                             {post.title}
@@ -361,40 +401,55 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-4">
-                    You haven't created any posts yet
-                  </p>
-                  <Button onClick={() => navigate('/dashboard/new')}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create your first post
+                  <p className="text-muted-foreground mb-2">No posts match your filters</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStatusFilter('all');
+                      setSortOrder('desc');
+                    }}
+                  >
+                    Reset filters
                   </Button>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              )
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-4">
+                  You haven't created any posts yet
+                </p>
+                <Button onClick={() => navigate('/dashboard/new')}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Create your first post
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
+    </div>
 
-      <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete post?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your post.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deletePostId && deleteMutation.mutate(deletePostId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Layout>
-  );
+    <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete post?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your post.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => deletePostId && deleteMutation.mutate(deletePostId)}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </Layout>
+);
 }
