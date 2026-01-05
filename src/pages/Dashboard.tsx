@@ -117,14 +117,14 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="container py-8 md:py-12">
-        <div className="max-w-6xl mx-auto space-y-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="container px-3 sm:px-4 py-6 md:py-10">
+        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1">
-              <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
+              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
                 Dashboard
               </h1>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <p className="text-xs text-muted-foreground sm:text-sm md:text-base">
                 Track your posts, drafts, and publishing flow.
               </p>
             </div>
@@ -252,60 +252,60 @@ export default function Dashboard() {
              </Card>
            ) : null}
 
-           {!isLoading && posts && posts.length > 0 && (
-             <div className="grid gap-4 md:grid-cols-3">
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="py-4">
-                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                     Total posts
-                   </p>
-                   <p className="mt-1 text-2xl font-semibold">{totalPosts}</p>
-                 </CardContent>
-               </Card>
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="py-4">
-                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                     Published / Drafts
-                   </p>
-                   <p className="mt-1 text-2xl font-semibold">
-                     {publishedPosts}
-                     <span className="mx-1 text-sm text-muted-foreground">/</span>
-                     {draftPosts}
-                   </p>
-                 </CardContent>
-               </Card>
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="py-4">
-                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                     Last updated
-                   </p>
-                   <p className="mt-1 text-sm text-muted-foreground">
-                     {lastUpdatedAt
-                       ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
-                       : 'No posts yet'}
-                   </p>
-                 </CardContent>
-               </Card>
-             </div>
-           )}
+          {!isLoading && posts && posts.length > 0 && (
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Total posts
+                  </p>
+                  <p className="mt-1 text-xl font-semibold sm:text-2xl">{totalPosts}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Published / Drafts
+                  </p>
+                  <p className="mt-1 text-xl font-semibold sm:text-2xl">
+                    {publishedPosts}
+                    <span className="mx-1 text-sm text-muted-foreground">/</span>
+                    {draftPosts}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Last updated
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {lastUpdatedAt
+                      ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
+                      : 'No posts yet'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
-          <Card className="border-border/60 shadow-sm">
-            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Card className="border-border/70 bg-card/40 shadow-sm">
+            <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-base md:text-lg font-semibold tracking-tight">
+                <CardTitle className="text-sm font-semibold tracking-tight sm:text-base md:text-lg">
                   Your Posts
                 </CardTitle>
-                <CardDescription className="text-xs md:text-sm text-muted-foreground">
+                <CardDescription className="text-xs text-muted-foreground sm:text-sm md:text-base">
                   {posts?.length || 0} {posts?.length === 1 ? 'post' : 'posts'} total
                 </CardDescription>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground sm:text-xs">
                 <div className="flex items-center gap-2">
                   <span className="uppercase tracking-[0.16em]">Status</span>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as 'all' | 'published' | 'draft')}
-                    className="rounded-md border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                   >
                     <option value="all">All</option>
                     <option value="published">Published</option>
@@ -317,7 +317,7 @@ export default function Dashboard() {
                   <select
                     value={sortOrder}
                     onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
-                    className="rounded-md border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                   >
                     <option value="desc">Newest first</option>
                     <option value="asc">Oldest first</option>
@@ -334,7 +334,7 @@ export default function Dashboard() {
               </div>
             ) : posts && posts.length > 0 ? (
               visiblePosts.length > 0 ? (
-                <div className="rounded-xl border border-border/70 overflow-hidden bg-card/60 backdrop-blur">
+                <div className="overflow-hidden rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
                   <Table>
                     <TableHeader>
                       <TableRow className="border-b border-border/60">
@@ -355,10 +355,10 @@ export default function Dashboard() {
                     <TableBody>
                       {visiblePosts.map((post) => (
                         <TableRow key={post.id} className="border-b border-border/40 last:border-0">
-                          <TableCell className="py-4 align-middle text-sm md:text-base font-medium">
+                          <TableCell className="py-3 align-middle text-sm font-medium md:text-base">
                             {post.title}
                           </TableCell>
-                          <TableCell className="py-4 align-middle">
+                          <TableCell className="py-3 align-middle">
                             <span
                               className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                 post.is_published
@@ -369,13 +369,13 @@ export default function Dashboard() {
                               {post.is_published ? 'Published' : 'Draft'}
                             </span>
                           </TableCell>
-                          <TableCell className="py-4 align-middle text-xs md:text-sm text-muted-foreground">
+                          <TableCell className="py-3 align-middle text-[0.7rem] text-muted-foreground sm:text-xs md:text-sm">
                             {formatDistanceToNow(new Date(post.updated_at), {
                               addSuffix: true,
                             })}
                           </TableCell>
-                          <TableCell className="py-4 align-middle text-right">
-                            <div className="flex justify-end gap-2">
+                          <TableCell className="py-3 align-middle text-right">
+                            <div className="flex justify-end gap-1.5 sm:gap-2">
                               <Button
                                 variant="ghost"
                                 size="icon"

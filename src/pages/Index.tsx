@@ -97,7 +97,7 @@ export default function Index() {
 
   return (
     <Layout>
-      <div className="container py-8 md:py-12">
+      <div className="container px-3 sm:px-4 py-6 sm:py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="space-y-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
