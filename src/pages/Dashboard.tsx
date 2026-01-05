@@ -81,6 +81,11 @@ export default function Dashboard() {
     },
   });
 
+  const totalPosts = posts?.length ?? 0;
+  const publishedPosts = posts?.filter((post) => post.is_published)?.length ?? 0;
+  const draftPosts = totalPosts - publishedPosts;
+  const lastUpdatedAt = posts?.[0]?.updated_at ?? null;
+
   const deleteMutation = useMutation({
     mutationFn: async (postId: string) => {
       const { error } = await supabase.from('posts').delete().eq('id', postId);
@@ -232,6 +237,43 @@ export default function Dashboard() {
                </CardContent>
              </Card>
            ) : null}
+
+           {!isLoading && posts && posts.length > 0 && (
+             <div className="grid gap-4 md:grid-cols-3">
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="py-4">
+                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                     Total posts
+                   </p>
+                   <p className="mt-1 text-2xl font-semibold">{totalPosts}</p>
+                 </CardContent>
+               </Card>
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="py-4">
+                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                     Published / Drafts
+                   </p>
+                   <p className="mt-1 text-2xl font-semibold">
+                     {publishedPosts}
+                     <span className="mx-1 text-sm text-muted-foreground">/</span>
+                     {draftPosts}
+                   </p>
+                 </CardContent>
+               </Card>
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="py-4">
+                   <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                     Last updated
+                   </p>
+                   <p className="mt-1 text-sm text-muted-foreground">
+                     {lastUpdatedAt
+                       ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
+                       : 'No posts yet'}
+                   </p>
+                 </CardContent>
+               </Card>
+             </div>
+           )}
 
            <Card className="border-border/60 shadow-sm">
             <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
