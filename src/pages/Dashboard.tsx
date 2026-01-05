@@ -31,9 +31,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { PlusCircle, Edit, Trash2, FileText } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, FileText, Globe2, Twitter, Instagram, Music2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface DashboardPost {
   id: string;
@@ -61,6 +62,23 @@ export default function Dashboard() {
       return data as DashboardPost[];
     },
     enabled: !!user,
+  });
+
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ['my-profile', user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(
+          'display_name, avatar_url, website_url, twitter_handle, instagram_handle, tiktok_handle'
+        )
+        .eq('id', user!.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
   });
 
   const deleteMutation = useMutation({
@@ -101,7 +119,121 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          <Card className="border-border/60 shadow-sm">
+          {isProfileLoading ? (
+            <Card className="border-border/60 bg-card/60 shadow-sm">
+              <CardContent className="flex items-center gap-4 py-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-48" />
+                </div>
+              </CardContent>
+            </Card>
+          ) : profile ? (
+            <Card className="border-border/60 bg-card/60 shadow-sm">
+              <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12 border border-border/60 shadow-sm">
+                    {profile.avatar_url ? (
+                      <AvatarImage
+                        src={profile.avatar_url}
+                        alt={profile.display_name || user?.email || 'Author avatar'}
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-primary/10 text-sm font-medium uppercase">
+                        {(profile.display_name || user?.email || '?').charAt(0)}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      You appear as
+                    </p>
+                    <p className="text-base font-semibold leading-tight">
+                      {profile.display_name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      This is how readers see you on your author page and posts.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-start gap-2 sm:items-end">
+                  {(() => {
+                    const website = profile.website_url?.trim();
+                    const twitter = profile.twitter_handle?.trim();
+                    const instagram = profile.instagram_handle?.trim();
+                    const tiktok = profile.tiktok_handle?.trim();
+
+                    let href: string | null = null;
+                    let label: string | null = null;
+                    let Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | null = null;
+
+                    if (website) {
+                      const normalized = website.startsWith('http') ? website : `https://${website}`;
+                      href = normalized;
+                      try {
+                        const url = new URL(normalized);
+                        label = url.hostname.replace('www.', '');
+                      } catch {
+                        label = website;
+                      }
+                      Icon = Globe2;
+                    } else if (twitter) {
+                      const handle = twitter.replace(/^@/, '');
+                      href = `https://twitter.com/${handle}`;
+                      label = `@${handle}`;
+                      Icon = Twitter;
+                    } else if (instagram) {
+                      const handle = instagram.replace(/^@/, '');
+                      href = `https://instagram.com/${handle}`;
+                      label = `@${handle}`;
+                      Icon = Instagram;
+                    } else if (tiktok) {
+                      const handle = tiktok.replace(/^@/, '');
+                      href = `https://www.tiktok.com/@${handle}`;
+                      label = `@${handle}`;
+                      Icon = Music2;
+                    }
+
+                    if (!href || !label || !Icon) {
+                      return (
+                        <div className="text-xs text-muted-foreground">
+                          No public links yet.{' '}
+                          <button
+                            type="button"
+                            onClick={() => navigate('/settings')}
+                            className="underline underline-offset-4 hover:text-foreground"
+                          >
+                            Add your website or socials.
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="flex flex-col items-start gap-1 text-xs sm:items-end">
+                        <span className="uppercase tracking-[0.16em] text-muted-foreground">
+                          Primary link
+                        </span>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/60 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background"
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                          <span>{label}</span>
+                        </a>
+                      </div>
+                    );
+                  })()}
+                </div>
+               </CardContent>
+             </Card>
+           ) : null}
+
+           <Card className="border-border/60 shadow-sm">
             <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
               <div>
                 <CardTitle className="text-base md:text-lg font-semibold tracking-tight">
