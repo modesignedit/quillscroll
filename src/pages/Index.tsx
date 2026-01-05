@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { Calendar, User, Search } from 'lucide-react';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { seedLovableDemoPosts } from '@/lib/demoPosts';
 
 interface Post {
   id: string;
@@ -27,6 +30,10 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['posts'],
@@ -263,16 +270,56 @@ export default function Index() {
             </div>
           ) : (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <p className="mb-4 text-muted-foreground">
+              <CardContent className="flex flex-col items-center justify-center gap-3 py-10">
+                <p className="text-sm text-muted-foreground">
                   No posts found. Try a different vibe.
                 </p>
-                <Link
-                  to="/auth"
-                  className="font-medium text-primary hover:underline"
-                >
-                  Sign up to write the first one →
-                </Link>
+
+                <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-3">
+                  {!user && (
+                    <Link
+                      to="/auth"
+                      className="text-xs font-medium text-primary hover:underline sm:text-sm"
+                    >
+                      Sign up to write the first one →
+                    </Link>
+                  )}
+
+                  {user && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          toast({ title: 'Loading demo posts…' });
+                          const result = await seedLovableDemoPosts(user.id);
+
+                          if (result.alreadySeeded) {
+                            toast({
+                              title: 'Demo posts already loaded',
+                              description: 'Your lovable.dev demo posts are already in your feed.',
+                            });
+                          } else {
+                            toast({
+                              title: 'Demo posts added',
+                              description: 'We pulled in 7 posts from lovable.dev/blog.',
+                            });
+                            queryClient.invalidateQueries({ queryKey: ['posts'] });
+                          }
+                        } catch (error) {
+                          console.error('Error seeding demo posts', error);
+                          toast({
+                            title: 'Error loading demo posts',
+                            description: 'Something went wrong while loading demo content.',
+                            variant: 'destructive',
+                          });
+                        }
+                      }}
+                      className="inline-flex items-center rounded-full border border-border/60 bg-background/80 px-3 py-1.5 text-xs font-medium text-primary shadow-sm transition-colors hover:border-primary hover:bg-background sm:text-sm"
+                    >
+                      Load 7 demo posts from lovable.dev
+                    </button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}
