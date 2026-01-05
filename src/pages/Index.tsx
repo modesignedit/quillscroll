@@ -6,11 +6,13 @@ import { Layout } from '@/components/Layout';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { Calendar, User } from 'lucide-react';
+import { getReadingTimeMinutes } from '@/lib/readingTime';
 
 interface Post {
   id: string;
   title: string;
   excerpt: string | null;
+  content_markdown: string;
   published_at: string | null;
   profiles: {
     display_name: string;
@@ -27,6 +29,7 @@ export default function Index() {
           id,
           title,
           excerpt,
+          content_markdown,
           published_at,
           profiles (
             display_name
@@ -74,7 +77,7 @@ export default function Index() {
                   <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
                       <CardTitle className="line-clamp-2">{post.title}</CardTitle>
-                      <CardDescription className="flex items-center gap-4 text-xs">
+                      <CardDescription className="flex flex-wrap items-center gap-3 text-xs">
                         <span className="flex items-center gap-1">
                           <User className="h-3 w-3" />
                           {post.profiles.display_name}
@@ -87,6 +90,9 @@ export default function Index() {
                             })}
                           </span>
                         )}
+                        <span className="text-[0.7rem] uppercase tracking-wide text-muted-foreground">
+                          {getReadingTimeMinutes(post.content_markdown)} min read
+                        </span>
                       </CardDescription>
                     </CardHeader>
                     {post.excerpt && (
