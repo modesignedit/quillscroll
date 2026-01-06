@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Sparkles, ArrowRight } from "lucide-react";
+import { X, Zap, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -27,49 +27,65 @@ export function WelcomeBanner({ gettingStartedSlug }: WelcomeBannerProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-background p-6 mb-8">
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
-      <div className="absolute -left-4 -bottom-4 h-24 w-24 rounded-full bg-primary/5 blur-xl" />
+    <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-accent/10 p-6 sm:p-8 mb-8 shadow-xl">
+      {/* Animated background blobs */}
+      <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gradient-to-br from-primary/30 to-primary/5 blur-3xl animate-pulse" />
+      <div className="absolute -left-8 -bottom-8 h-40 w-40 rounded-full bg-gradient-to-tr from-accent/30 to-accent/5 blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute right-1/4 top-1/2 h-24 w-24 rounded-full bg-primary/10 blur-xl" />
       
+      {/* Dismiss button */}
       <button
         onClick={handleDismiss}
-        className="absolute right-3 top-3 rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        className="absolute right-4 top-4 z-10 rounded-full p-2 text-muted-foreground hover:bg-background/80 hover:text-foreground transition-all duration-200"
         aria-label="Dismiss welcome banner"
       >
         <X className="h-4 w-4" />
       </button>
 
-      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/20">
-            <Sparkles className="h-5 w-5 text-primary" />
+      <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* Content */}
+        <div className="flex items-start gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25">
+            <Zap className="h-7 w-7" />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">Welcome to Pulse!</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              New here? Check out our getting started guide to learn how to create and publish your first post.
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-foreground">Hey there! 👋</h3>
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">
+                <Sparkles className="h-3 w-3" />
+                New
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Welcome to Pulse! Ready to share your story with the world? Check out our quick guide to get started.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:shrink-0">
+        {/* Actions */}
+        <div className="flex items-center gap-3 sm:shrink-0">
           {gettingStartedSlug ? (
-            <Button asChild size="sm" className="gap-1.5">
+            <Button asChild size="lg" className="rounded-xl gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
               <Link to={`/post/${gettingStartedSlug}`}>
-                Get Started
-                <ArrowRight className="h-3.5 w-3.5" />
+                Let's go
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           ) : (
-            <Button asChild size="sm" className="gap-1.5">
+            <Button asChild size="lg" className="rounded-xl gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
               <Link to="/auth">
-                Sign Up to Start
-                <ArrowRight className="h-3.5 w-3.5" />
+                Get Started
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={handleDismiss}>
-            Dismiss
+          <Button 
+            variant="ghost" 
+            size="lg" 
+            onClick={handleDismiss}
+            className="rounded-xl hover:bg-background/60"
+          >
+            Maybe later
           </Button>
         </div>
       </div>
