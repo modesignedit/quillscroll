@@ -28,7 +28,11 @@ export function Navbar() {
           to="/"
           className="flex items-center gap-2 font-semibold text-lg sm:text-xl"
         >
-          <BookOpen className="h-6 w-6" />
+          <img
+            src="/favicon.png"
+            alt="Pulse logo"
+            className="h-6 w-6 rounded-md border border-border/50 bg-background object-contain"
+          />
           <span className="hidden sm:inline leading-none">Pulse</span>
         </Link>
 
