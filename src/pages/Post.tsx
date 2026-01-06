@@ -134,8 +134,9 @@ export default function Post() {
         <div className="mx-auto max-w-3xl">
           <Button
             variant="ghost"
+            size="sm"
             onClick={() => navigate('/')}
-            className="group mb-6 px-0 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="group mb-6 rounded-full px-4 text-sm text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-foreground hover:shadow-sm"
           >
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to feed
