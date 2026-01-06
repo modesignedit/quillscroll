@@ -1,73 +1,109 @@
-# Welcome to your Lovable project
+✍️ QuillScroll — UI-First Blogging Platform
 
-## Project info
+QuillScroll is a modern, mobile-first blogging platform designed for creators who value clean UI, readability, and focus.
+Built with a strong product mindset, it emphasizes writer experience, reader experience, and scalable architecture.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+🌍 Live App: https://quillscroll.lovable.app
 
-## How can I edit this code?
+🚀 Features
 
-There are several ways of editing your application.
+🔐 User authentication (signup & login)
 
-**Use Lovable**
+🛡️ Protected creator dashboard
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+✍️ Create, edit, and delete blog posts (CRUD)
 
-Changes made via Lovable will be committed automatically to this repo.
+🧾 Markdown-powered writing experience
 
-**Use your preferred IDE**
+🌍 Public blog feed
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+📖 Clean, distraction-free reading pages
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+🌗 Dark / Light mode toggle
 
-Follow these steps:
+📱 Fully mobile-first and responsive
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+⚡ Structured for scalability and future growth
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+🧠 Product & Engineering Focus
 
-# Step 3: Install the necessary dependencies.
-npm i
+UI-first, Gen Z–friendly design
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Mobile readability and typography
 
-**Edit a file directly in GitHub**
+Clean content hierarchy for writers and readers
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Authentication-protected content management
 
-**Use GitHub Codespaces**
+Scalable component and data structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🛠️ Built With
 
-## What technologies are used for this project?
+Lovable.dev
 
-This project is built with:
+JavaScript
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+HTML & CSS
 
-## How can I deploy this project?
+Markdown rendering
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Client-side state management
 
-## Can I connect a custom domain to my Lovable project?
+📸 Screenshots
 
-Yes, you can!
+Add screenshots showing:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Home / public feed
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Blog reading view
+
+Creator dashboard
+
+Mobile view
+
+Dark / light mode
+
+🔗 Live Demo
+
+👉 https://quillscroll.lovable.app
+
+📂 How It Works
+
+Users sign up or log in
+
+Authenticated creators access a private dashboard
+
+Posts are written using Markdown
+
+Published posts appear in the public feed
+
+Readers enjoy a clean, mobile-optimized reading experience
+
+UI adapts seamlessly across devices
+
+🌱 Roadmap
+
+Likes and comments
+
+Tags and categories
+
+Author profile pages
+
+Reading time estimation
+
+Search and filtering
+
+Backend database integration
+
+👨‍💻 Author
+
+Moses Orji
+Vibe Coder | UI-First Full-Stack Builder
+
+GitHub: https://github.com/modesignedit
+
+LinkedIn: https://ng.linkedin.com/in/moses-orji-5553a8a9
+
+⭐ Why QuillScroll Matters
+
+QuillScroll demonstrates product thinking, clean UX, and scalable CRUD architecture, making it a strong portfolio project for modern frontend and full-stack roles.
