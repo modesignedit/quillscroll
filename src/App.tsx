@@ -14,6 +14,7 @@ import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
 import AuthorPage from "./pages/AuthorPage";
 import ProfileSettings from "./pages/ProfileSettings";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/post/:id" element={<Post />} />
               <Route path="/author/:id" element={<AuthorPage />} />
               <Route
