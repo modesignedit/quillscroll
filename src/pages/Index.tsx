@@ -127,7 +127,7 @@ export default function Index() {
 
           <WelcomeBanner gettingStartedSlug={gettingStartedSlug} />
 
-          {/* Pulse brand/about section */}
+          {/* QuillScroll brand/about section */}
           <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-gradient-to-br from-muted/60 to-muted/30 px-5 py-4 text-left sm:flex-row sm:items-center sm:justify-between sm:gap-4 animate-slide-up shadow-sm">
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-background/80 text-lg text-primary shadow-sm">
@@ -135,13 +135,13 @@ export default function Index() {
               </div>
               <div className="space-y-1">
                 <p className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                  About Pulse
+                  About QuillScroll
                 </p>
                 <p className="text-sm font-semibold sm:text-base font-display">
                   A quill-and-scroll home for modern creators.
                 </p>
                 <p className="text-xs text-muted-foreground sm:text-sm">
-                  Pulse is a focused creator blog platform where you draft, publish, and share your best writing in a calm, distraction-free space.
+                  QuillScroll is a focused creator blog platform where you draft, publish, and share your best writing in a calm, distraction-free space.
                 </p>
               </div>
             </div>
