@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Zap, Heart, ArrowLeft, Mail } from 'lucide-react';
+import { Sparkles, Zap, Heart, ArrowLeft, Mail, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const loginSchema = z.object({
@@ -43,6 +43,8 @@ export default function Auth() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   // Reset Google loading state when user returns to window (e.g., after closing OAuth popup)
   useEffect(() => {
@@ -321,16 +323,16 @@ export default function Auth() {
                 </div>
 
                 <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}>
-                  <TabsList className="grid w-full grid-cols-2 mb-8 h-12 rounded-2xl bg-muted/50 p-1">
+                  <TabsList className="grid w-full grid-cols-2 mb-8 h-12 rounded-2xl bg-muted p-1.5">
                     <TabsTrigger 
                       value="login" 
-                      className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-md text-sm font-medium transition-all"
+                      className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-sm font-semibold transition-all"
                     >
                       Sign in
                     </TabsTrigger>
                     <TabsTrigger 
                       value="signup" 
-                      className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-md text-sm font-medium transition-all"
+                      className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-sm font-semibold transition-all"
                     >
                       Create account
                     </TabsTrigger>
@@ -365,13 +367,28 @@ export default function Auth() {
                             Forgot password?
                           </button>
                         </div>
-                        <Input
-                          id="login-password"
-                          type="password"
-                          placeholder="••••••••"
-                          className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-                          {...loginForm.register('password')}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="login-password"
+                            type={showLoginPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
+                            {...loginForm.register('password')}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                            onClick={() => setShowLoginPassword(!showLoginPassword)}
+                          >
+                            {showLoginPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </Button>
+                        </div>
                         {loginForm.formState.errors.password && (
                           <p className="text-xs text-destructive flex items-center gap-1">
                             <span>⚠️</span> {loginForm.formState.errors.password.message}
@@ -432,13 +449,28 @@ export default function Auth() {
 
                       <div className="space-y-2">
                         <Label htmlFor="signup-password" className="text-sm font-medium">Create a password</Label>
-                        <Input
-                          id="signup-password"
-                          type="password"
-                          placeholder="••••••••"
-                          className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-                          {...signupForm.register('password')}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="signup-password"
+                            type={showSignupPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
+                            {...signupForm.register('password')}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                            onClick={() => setShowSignupPassword(!showSignupPassword)}
+                          >
+                            {showSignupPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </Button>
+                        </div>
                         {signupForm.formState.errors.password && (
                           <p className="text-xs text-destructive flex items-center gap-1">
                             <span>⚠️</span> {signupForm.formState.errors.password.message}
