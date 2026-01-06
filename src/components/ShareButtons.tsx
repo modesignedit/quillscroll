@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Twitter, Linkedin, Link2, Check } from 'lucide-react';
+import { Twitter, Linkedin, Link2, Check, Mail, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
@@ -42,6 +42,21 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
     );
   };
 
+  const shareOnWhatsApp = () => {
+    const text = encodeURIComponent(`${title} ${shareUrl}`);
+    window.open(
+      `https://wa.me/?text=${text}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent(title);
+    const body = encodeURIComponent(`Check out this post: ${shareUrl}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
   return (
     <div className="flex items-center gap-2">
       <span className="text-[0.65rem] font-medium uppercase tracking-[0.15em] text-muted-foreground">
@@ -65,6 +80,24 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
           aria-label="Share on LinkedIn"
         >
           <Linkedin className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareOnWhatsApp}
+          className="h-8 w-8 rounded-full text-muted-foreground hover:bg-[#25D366]/10 hover:text-[#25D366]"
+          aria-label="Share on WhatsApp"
+        >
+          <MessageCircle className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareViaEmail}
+          className="h-8 w-8 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          aria-label="Share via Email"
+        >
+          <Mail className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
