@@ -168,90 +168,151 @@ export default function Index() {
             </Button>
           </div>
 
-          <div className="space-y-4">
+          {/* Search & Filters */}
+          <div className="space-y-5">
+            {/* Search input */}
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search posts by title, vibe, or content..."
-                className="h-9 rounded-full border-border/60 bg-muted/60 pl-9 pr-3 text-sm placeholder:text-muted-foreground/70 shadow-sm focus-visible:ring-1 md:text-sm"
+                placeholder="Search posts..."
+                className="h-11 rounded-full border-border bg-card pl-11 pr-4 text-sm shadow-sm transition-shadow focus-visible:shadow-md focus-visible:ring-1"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
+            {/* Category & Tag Filters */}
             {(allCategories.length > 0 || allTags.length > 0) && (
-              <div className="flex flex-wrap items-center gap-2 text-xs">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+                {/* Categories */}
                 {allCategories.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                      Categories
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Category
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveCategory(null)}
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
-                        activeCategory === null
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
-                      }`}
-                    >
-                      All
-                    </button>
-                    {allCategories.map((category) => (
+                    <div className="flex flex-wrap gap-2">
                       <button
-                        key={category}
                         type="button"
-                        onClick={() =>
-                          setActiveCategory((current) =>
-                            current === category ? null : category
-                          )
-                        }
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
-                          activeCategory === category
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                        onClick={() => setActiveCategory(null)}
+                        className={`inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+                          activeCategory === null
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'bg-muted text-muted-foreground hover:bg-accent hover:text-foreground'
                         }`}
                       >
-                        {category}
+                        All
                       </button>
-                    ))}
+                      {allCategories.map((category) => (
+                        <button
+                          key={category}
+                          type="button"
+                          onClick={() =>
+                            setActiveCategory((current) =>
+                              current === category ? null : category
+                            )
+                          }
+                          className={`inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+                            activeCategory === category
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'bg-muted text-muted-foreground hover:bg-accent hover:text-foreground'
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
+                {/* Tags */}
                 {allTags.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                       Tags
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTag(null)}
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
-                        activeTag === null
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
-                      }`}
-                    >
-                      All
-                    </button>
-                    {allTags.map((tag) => (
+                    <div className="flex flex-wrap gap-2">
                       <button
-                        key={tag}
                         type="button"
-                        onClick={() =>
-                          setActiveTag((current) => (current === tag ? null : tag))
-                        }
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
-                          activeTag === tag
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                        onClick={() => setActiveTag(null)}
+                        className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+                          activeTag === null
+                            ? 'border-primary/50 bg-primary/10 text-primary'
+                            : 'border-border bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground'
                         }`}
                       >
-                        {tag}
+                        All
                       </button>
-                    ))}
+                      {allTags.map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() =>
+                            setActiveTag((current) => (current === tag ? null : tag))
+                          }
+                          className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+                            activeTag === tag
+                              ? 'border-primary/50 bg-primary/10 text-primary'
+                              : 'border-border bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                          }`}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Active filters indicator */}
+            {(activeCategory || activeTag || searchQuery) && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Showing results for:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {searchQuery && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-foreground">
+                      "{searchQuery}"
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="ml-0.5 hover:text-foreground"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {activeCategory && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                      {activeCategory}
+                      <button
+                        onClick={() => setActiveCategory(null)}
+                        className="ml-0.5 hover:text-primary/70"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {activeTag && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                      #{activeTag}
+                      <button
+                        onClick={() => setActiveTag(null)}
+                        className="ml-0.5 hover:text-primary/70"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setActiveCategory(null);
+                    setActiveTag(null);
+                  }}
+                  className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                >
+                  Clear all
+                </button>
               </div>
             )}
           </div>
