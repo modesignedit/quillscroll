@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { seedLovableDemoPosts } from '@/lib/demoPosts';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { WelcomeBanner } from '@/components/WelcomeBanner';
+import { AuthorCard } from '@/components/AuthorCard';
 
 interface Post {
   id: string;
@@ -27,6 +27,12 @@ interface Post {
   author_id: string;
   profiles: {
     display_name: string;
+    avatar_url: string | null;
+    bio: string | null;
+    website_url: string | null;
+    twitter_handle: string | null;
+    instagram_handle: string | null;
+    tiktok_handle: string | null;
   };
 }
 
@@ -55,7 +61,13 @@ export default function Index() {
           tags,
           author_id,
           profiles (
-            display_name
+            display_name,
+            avatar_url,
+            bio,
+            website_url,
+            twitter_handle,
+            instagram_handle,
+            tiktok_handle
           )
         `)
         .eq('is_published', true)
@@ -323,22 +335,16 @@ export default function Index() {
                         {post.title}
                       </CardTitle>
                       <CardDescription className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground md:text-xs">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            navigate(`/author/${post.author_id}`);
-                          }}
-                          className="inline-flex items-center gap-1 text-left hover:text-foreground"
-                        >
-                          <Avatar className="h-5 w-5 border border-border/60">
-                            <AvatarFallback className="bg-primary/10 text-[0.6rem] font-medium uppercase">
-                              {post.profiles.display_name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span>{post.profiles.display_name}</span>
-                        </button>
+                        <AuthorCard
+                          authorId={post.author_id}
+                          displayName={post.profiles.display_name}
+                          avatarUrl={post.profiles.avatar_url}
+                          websiteUrl={post.profiles.website_url}
+                          twitterHandle={post.profiles.twitter_handle}
+                          instagramHandle={post.profiles.instagram_handle}
+                          tiktokHandle={post.profiles.tiktok_handle}
+                          compact
+                        />
                         {post.published_at && (
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
