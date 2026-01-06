@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Zap, CheckCircle, Lock } from 'lucide-react';
+import { Sparkles, Zap, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const resetPasswordSchema = z.object({
@@ -30,6 +30,8 @@ export default function ResetPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -113,7 +115,7 @@ export default function ResetPassword() {
             </p>
             <Button
               onClick={() => navigate('/auth')}
-              className="rounded-xl"
+              className="rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
             >
               Back to Sign In
             </Button>
@@ -145,7 +147,7 @@ export default function ResetPassword() {
                     <CheckCircle className="h-8 w-8" />
                   </div>
                 </div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">Password updated! 🎉</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Password updated!</h2>
                 <p className="text-muted-foreground text-sm max-w-xs mx-auto">
                   Your password has been reset. Redirecting you to sign in...
                 </p>
@@ -168,13 +170,28 @@ export default function ResetPassword() {
                 <form onSubmit={form.handleSubmit(handleResetPassword)} className="space-y-5">
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-sm font-medium">New password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-                      {...form.register('password')}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
+                        {...form.register('password')}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
                     {form.formState.errors.password && (
                       <p className="text-xs text-destructive flex items-center gap-1">
                         <span>⚠️</span> {form.formState.errors.password.message}
@@ -184,13 +201,28 @@ export default function ResetPassword() {
 
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-                      {...form.register('confirmPassword')}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
+                        {...form.register('confirmPassword')}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
                     {form.formState.errors.confirmPassword && (
                       <p className="text-xs text-destructive flex items-center gap-1">
                         <span>⚠️</span> {form.formState.errors.confirmPassword.message}

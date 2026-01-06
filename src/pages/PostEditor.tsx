@@ -321,7 +321,7 @@ export default function PostEditor() {
                 variant="outline"
                 onClick={handleSubmit((data) => onSubmit(data, false))}
                 disabled={isSubmitting}
-                className="justify-center sm:w-auto text-sm md:text-base"
+                className="justify-center sm:w-auto text-sm md:text-base rounded-xl border-border/50 bg-background/50 hover:bg-background transition-all"
               >
                 <Save className="mr-2 h-4 w-4" />
                 Save Draft
@@ -330,7 +330,7 @@ export default function PostEditor() {
                 type="button"
                 onClick={handleSubmit((data) => onSubmit(data, true))}
                 disabled={isSubmitting}
-                className="justify-center sm:w-auto text-sm md:text-base shadow-sm"
+                className="justify-center sm:w-auto text-sm md:text-base rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
               >
                 Publish
               </Button>
