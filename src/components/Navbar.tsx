@@ -19,12 +19,14 @@ export function Navbar() {
       <div className="container flex h-14 items-center justify-between px-3 sm:px-4 md:h-16">
         <Link
           to="/"
-          className="group flex items-center gap-2.5 font-display text-xl font-semibold tracking-tight transition-colors hover:text-primary sm:text-2xl"
+          className="group flex items-center gap-2 font-display text-xl font-bold tracking-tight transition-all duration-300 hover:text-primary sm:text-2xl"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md transition-transform duration-200 group-hover:scale-110 sm:h-9 sm:w-9">
-            ✒︎
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/40 sm:h-10 sm:w-10">
+            <span className="text-lg sm:text-xl">✒</span>
           </span>
-          <span className="hidden sm:inline">Pulse</span>
+          <span className="hidden bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-300 group-hover:from-primary group-hover:to-primary/70 sm:inline">
+            Quill<span className="font-extrabold">Scroll</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-4">
