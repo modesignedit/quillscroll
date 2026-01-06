@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -133,6 +133,35 @@ export default function PostEditor() {
   };
 
   const currentContent = watch('content_markdown');
+  const currentTitle = watch('title');
+  const currentExcerpt = watch('excerpt');
+
+  const aiSuggestMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('ai-title-summary', {
+        body: {
+          content_markdown: currentContent,
+          title: currentTitle,
+          excerpt: currentExcerpt,
+        },
+      });
+
+      if (error) {
+        console.error('AI suggestion error', error);
+        throw new Error(error.message || 'AI suggestion failed');
+      }
+
+      return data as { title?: string; excerpt?: string };
+    },
+    onSuccess: (data) => {
+      if (data?.title) setValue('title', data.title, { shouldValidate: true });
+      if (data?.excerpt) setValue('excerpt', data.excerpt, { shouldValidate: true });
+      toast.success('AI suggestions applied');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to get AI suggestions');
+    },
+  });
 
   return (
     <Layout>
@@ -167,12 +196,25 @@ export default function PostEditor() {
             </div>
 
             <div className="space-y-3">
-              <Label
-                htmlFor="excerpt"
-                className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                Excerpt (optional)
-              </Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label
+                  htmlFor="excerpt"
+                  className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  Excerpt (optional)
+                </Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-7 rounded-full px-3 text-[0.7rem] font-medium"
+                  onClick={() => aiSuggestMutation.mutate()}
+                  disabled={aiSuggestMutation.isPending || !currentContent}
+                >
+                  <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                  AI suggest
+                </Button>
+              </div>
               <Textarea
                 id="excerpt"
                 placeholder="A quick vibe-check summary for the feed..."
