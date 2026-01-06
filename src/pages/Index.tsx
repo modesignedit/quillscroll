@@ -247,19 +247,35 @@ export default function Index() {
                   <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg">
                     <CardHeader className="space-y-2 px-3 py-3 md:px-4 md:py-4">
                       {post.category && (
-                        <span className="mb-1 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setActiveCategory((current) =>
+                              current === post.category ? null : post.category
+                            );
+                          }}
+                          className="mb-1 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                        >
                           {post.category}
-                        </span>
+                        </button>
                       )}
                       {post.tags && post.tags.length > 0 && (
                         <div className="mb-1 flex flex-wrap gap-1.5">
                           {post.tags.map((tag) => (
-                            <span
+                            <button
                               key={tag}
-                              className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground"
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setActiveTag((current) => (current === tag ? null : tag));
+                              }}
+                              className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
                             >
                               {tag}
-                            </span>
+                            </button>
                           ))}
                         </div>
                       )}
