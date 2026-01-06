@@ -2,50 +2,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { BookOpen, LogOut, LayoutDashboard, Settings } from 'lucide-react';
-
 export function Navbar() {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const navigate = useNavigate();
-
   const getInitials = (email: string) => {
     return email.substring(0, 2).toUpperCase();
   };
-
-  return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+  return <nav className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="container flex h-14 items-center justify-between px-3 sm:px-4">
-        <Link
-          to="/"
-          className="flex items-center gap-2 font-semibold text-lg sm:text-xl"
-        >
-          <img
-            src="/favicon.png"
-            alt="Pulse logo"
-            className="h-6 w-6 rounded-md border border-border/50 bg-background object-contain"
-          />
+        <Link to="/" className="flex items-center gap-2 font-semibold text-lg sm:text-xl">
+          
           <span className="hidden sm:inline leading-none">Pulse</span>
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-4">
           <ThemeToggle />
 
-          {user ? (
-            <DropdownMenu>
+          {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/60 hover:bg-background"
-                >
+                <button type="button" className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/60 hover:bg-background">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                       {getInitials(user.email || 'U')}
@@ -70,22 +51,15 @@ export function Navbar() {
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={signOut}
-                  className="text-destructive"
-                >
+                <DropdownMenuItem onClick={signOut} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button asChild variant="outline" size="sm" className="h-8 px-3 text-xs sm:text-sm">
+            </DropdownMenu> : <Button asChild variant="outline" size="sm" className="h-8 px-3 text-xs sm:text-sm">
               <Link to="/auth">Sign In</Link>
-            </Button>
-          )}
+            </Button>}
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 }
