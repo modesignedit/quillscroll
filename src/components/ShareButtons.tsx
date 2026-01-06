@@ -45,24 +45,62 @@ export function ShareButtons({
     const body = encodeURIComponent(`Check out this post: ${shareUrl}`);
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
-  return <div className="flex items-center gap-2">
-      
-      <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon" onClick={shareOnTwitter} className="h-8 w-8 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary" aria-label="Share on Twitter">
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        Share
+      </span>
+      <div className="flex items-center gap-1.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareOnTwitter}
+          className="h-9 w-9 rounded-full text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-[#1DA1F2]/10 hover:text-[#1DA1F2] hover:shadow-md"
+          aria-label="Share on Twitter"
+        >
           <Twitter className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={shareOnLinkedIn} className="h-8 w-8 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary" aria-label="Share on LinkedIn">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareOnLinkedIn}
+          className="h-9 w-9 rounded-full text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-[#0A66C2]/10 hover:text-[#0A66C2] hover:shadow-md"
+          aria-label="Share on LinkedIn"
+        >
           <Linkedin className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={shareOnWhatsApp} className="h-8 w-8 rounded-full text-muted-foreground hover:bg-[#25D366]/10 hover:text-[#25D366]" aria-label="Share on WhatsApp">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareOnWhatsApp}
+          className="h-9 w-9 rounded-full text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-[#25D366]/10 hover:text-[#25D366] hover:shadow-md"
+          aria-label="Share on WhatsApp"
+        >
           <MessageCircle className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={shareViaEmail} className="h-8 w-8 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary" aria-label="Share via Email">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={shareViaEmail}
+          className="h-9 w-9 rounded-full text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-primary/10 hover:text-primary hover:shadow-md"
+          aria-label="Share via Email"
+        >
           <Mail className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleCopyLink} className="h-8 w-8 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary" aria-label="Copy link">
-          {copied ? <Check className="h-4 w-4 text-green-500" /> : <Link2 className="h-4 w-4" />}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleCopyLink}
+          className={`h-9 w-9 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-md ${
+            copied
+              ? 'bg-green-500/10 text-green-500'
+              : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+          }`}
+          aria-label="Copy link"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 }
