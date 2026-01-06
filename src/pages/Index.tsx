@@ -117,21 +117,31 @@ export default function Index() {
           </div>
 
           {/* Pulse brand/about section */}
-          <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-left text-xs sm:flex-row sm:items-center sm:gap-3 sm:text-sm animate-fade-in">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background/80 text-sm text-primary">
-              <span>✒︎</span>
+          <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-left text-xs sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:text-sm animate-fade-in">
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background/80 text-sm text-primary">
+                <span>✒︎</span>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  About Pulse
+                </p>
+                <p className="text-xs font-medium sm:text-sm">
+                  A quill-and-scroll home for modern creators.
+                </p>
+                <p className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                  Pulse is a focused creator blog platform where you draft, publish, and share your best writing in a calm, distraction-free space.
+                </p>
+              </div>
             </div>
-            <div className="space-y-0.5">
-              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                About Pulse
-              </p>
-              <p className="text-xs font-medium sm:text-sm">
-                A quill-and-scroll home for modern creators.
-              </p>
-              <p className="text-[0.7rem] text-muted-foreground sm:text-xs">
-                Pulse is a focused creator blog platform where you draft, publish, and share your best writing in a calm, distraction-free space.
-              </p>
-            </div>
+            <Button
+              type="button"
+              size="sm"
+              className="mt-1 inline-flex rounded-full px-4 text-xs font-medium sm:mt-0 hover-scale"
+              onClick={() => navigate(user ? '/dashboard/new' : '/auth')}
+            >
+              {user ? 'Start writing' : 'Sign up to write'}
+            </Button>
           </div>
 
           <div className="space-y-4">
