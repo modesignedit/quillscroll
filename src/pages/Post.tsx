@@ -124,20 +124,20 @@ export default function Post() {
 
   return (
     <Layout>
-      <div className="fixed inset-x-0 top-[56px] z-30 h-[2px] bg-border/40 md:top-[64px]">
+      <div className="fixed inset-x-0 top-[56px] z-30 h-[3px] bg-border/40 md:top-[64px]">
         <div
-          className="h-full bg-primary transition-[width] duration-150 ease-out"
+          className="h-full bg-primary shadow-glow transition-[width] duration-150 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="container px-3 sm:px-4 py-6 sm:py-8">
+      <div className="container px-3 sm:px-4 py-8 sm:py-12">
         <div className="mx-auto max-w-3xl">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="mb-5 px-0 text-sm text-muted-foreground hover:text-foreground"
+            className="group mb-6 px-0 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to feed
           </Button>
 
@@ -176,16 +176,16 @@ export default function Post() {
               */}
             </div>
           ) : post ? (
-            <article className="space-y-6">
-              <header className="space-y-4">
+            <article className="space-y-8 animate-fade-in">
+              <header className="space-y-5">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 space-y-3">
+                  <div className="min-w-0 space-y-4">
                     {post.category && (
-                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                      <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-sm">
                         {post.category}
                       </span>
                     )}
-                    <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
+                    <h1 className="break-words font-display text-3xl font-semibold leading-tight tracking-tight md:text-4xl lg:text-5xl">
                       {post.title}
                     </h1>
                     {post.tags && post.tags.length > 0 && (
@@ -258,10 +258,10 @@ export default function Post() {
                 <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
               </div>
 
-              <section className="mt-10 rounded-2xl border border-border/70 bg-muted/40 p-5 md:p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <Avatar className="h-12 w-12 border border-border/60 shadow-sm md:h-14 md:w-14">
+              <section className="mt-12 rounded-2xl border border-border/70 bg-gradient-to-br from-muted/60 to-muted/30 p-6 md:p-8 shadow-sm">
+                <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-4 md:gap-5">
+                    <Avatar className="h-14 w-14 border-2 border-border/60 shadow-md md:h-16 md:w-16 ring-2 ring-primary/10">
                       {post.profiles.avatar_url ? (
                         <AvatarImage
                           src={post.profiles.avatar_url}

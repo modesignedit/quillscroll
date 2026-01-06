@@ -159,21 +159,21 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="container px-3 sm:px-4 py-6 md:py-10">
-        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-1">
-              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
+      <div className="container px-3 sm:px-4 py-8 md:py-12">
+        <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between animate-fade-in">
+            <div className="space-y-2">
+              <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
                 Dashboard
               </h1>
-              <p className="text-xs text-muted-foreground sm:text-sm md:text-base">
+              <p className="text-sm text-muted-foreground sm:text-base md:text-lg">
                 Track your posts, drafts, and publishing flow.
               </p>
             </div>
             <Button
               onClick={() => navigate('/dashboard/new')}
               size="lg"
-              className="mt-2 sm:mt-0 shadow-sm"
+              className="mt-2 sm:mt-0 shadow-md"
             >
               <PlusCircle className="mr-2 h-5 w-5" />
               New Post
@@ -181,16 +181,16 @@ export default function Dashboard() {
           </div>
 
           {!allOnboardingDone && (
-            <Card className="border-dashed border-border/70 bg-card/40 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold tracking-tight sm:text-base">
+            <Card className="border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent shadow-sm animate-slide-up">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold tracking-tight font-display sm:text-lg">
                   Get set up in a few steps
                 </CardTitle>
-                <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                <CardDescription className="text-sm text-muted-foreground">
                   Complete these quick tasks so your profile and posts look great to readers.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <div className="space-y-2">
                   {/* Complete profile */}
                   <div className="flex items-center justify-between gap-3">
@@ -423,10 +423,10 @@ export default function Dashboard() {
           ) : null}
 
           {/* Recent posts overview */}
-          <Card className="border-border/70 bg-card/40 shadow-sm">
-            <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <Card className="border-border/70 bg-card shadow-sm animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-sm font-semibold tracking-tight sm:text-base">
+                <CardTitle className="text-base font-semibold tracking-tight font-display sm:text-lg">
                   Recent posts
                 </CardTitle>
                 <CardDescription className="text-xs text-muted-foreground sm:text-sm">
