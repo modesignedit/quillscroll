@@ -25,7 +25,7 @@ export default {
   				'sans-serif'
   			],
   			sans: [
-  				'Source Sans Pro',
+  				'Lato',
   				'ui-sans-serif',
   				'system-ui',
   				'-apple-system',
@@ -38,7 +38,7 @@ export default {
   				'sans-serif'
   			],
   			serif: [
-  				'Source Serif Pro',
+  				'EB Garamond',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -47,7 +47,7 @@ export default {
   				'serif'
   			],
   			mono: [
-  				'Source Code Pro',
+  				'Fira Code',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
@@ -176,7 +176,7 @@ export default {
   					opacity: '1'
   				}
   			},
-  			'shimmer': {
+  			shimmer: {
   				'0%': {
   					backgroundPosition: '-200% 0'
   				},
@@ -200,7 +200,7 @@ export default {
   			'fade-out': 'fade-out 0.3s ease-out',
   			'scale-in': 'scale-in 0.3s ease-out',
   			'slide-up': 'slide-up 0.5s ease-out',
-  			'shimmer': 'shimmer 2s linear infinite',
+  			shimmer: 'shimmer 2s linear infinite',
   			'pulse-soft': 'pulse-soft 2s ease-in-out infinite'
   		}
   	}
