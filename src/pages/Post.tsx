@@ -124,184 +124,178 @@ export default function Post() {
 
   return (
     <Layout>
-      <div className="fixed inset-x-0 top-[56px] z-30 h-[3px] bg-border/40 md:top-[64px]">
+      {/* Reading progress bar */}
+      <div className="fixed inset-x-0 top-[56px] z-30 h-1 bg-muted/50 md:top-[64px]">
         <div
-          className="h-full bg-primary shadow-glow transition-[width] duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-primary to-primary/80 transition-[width] duration-100 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="container px-3 sm:px-4 py-8 sm:py-12">
-        <div className="mx-auto max-w-3xl">
+
+      <div className="container px-4 py-10 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-2xl">
+          {/* Back button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate('/')}
-            className="group mb-6 rounded-full px-4 text-sm text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-foreground hover:shadow-sm"
+            className="group mb-8 -ml-2 gap-2 text-muted-foreground hover:text-foreground hover:bg-transparent"
           >
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to feed
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+            <span className="text-sm">Back</span>
           </Button>
 
           {isLoading ? (
-            <div className="space-y-6">
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-64 w-full" />
+            <div className="space-y-8 animate-pulse">
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <div className="pt-8 space-y-4">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
             </div>
           ) : isError ? (
-            <div className="py-12 text-center space-y-4">
-              <p className="text-sm text-muted-foreground">
-                We couldnt load this post. Please check your connection and try again.
+            <div className="py-20 text-center space-y-6">
+              <p className="text-muted-foreground">
+                Couldn't load this post
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/')}
-                  className="rounded-full px-4"
-                >
-                  Back to feed
+              <div className="flex items-center justify-center gap-3">
+                <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+                  Go back
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => refetch()}
-                  className="rounded-full px-4"
-                >
+                <Button size="sm" onClick={() => refetch()}>
                   Try again
                 </Button>
               </div>
-              {/* Optional debug info:
-              <p className="text-[0.7rem] text-muted-foreground/70">
-                {error instanceof Error ? error.message : 'Unexpected error occurred.'}
-              </p>
-              */}
             </div>
           ) : post ? (
-            <article className="space-y-8 animate-fade-in">
-              <header className="space-y-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 space-y-4">
-                    {post.category && (
-                      <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-sm">
-                        {post.category}
+            <article className="animate-fade-in">
+              {/* Header */}
+              <header className="mb-10 space-y-6">
+                {/* Category badge */}
+                {post.category && (
+                  <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                    {post.category}
+                  </span>
+                )}
+
+                {/* Title */}
+                <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+                  {post.title}
+                </h1>
+
+                {/* Meta info */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                  <Link
+                    to={`/author/${post.author_id}`}
+                    className="font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    {post.profiles.display_name}
+                  </Link>
+                  <span className="text-muted-foreground/40">·</span>
+                  {post.published_at && (
+                    <>
+                      <span>
+                        {formatDistanceToNow(new Date(post.published_at), { addSuffix: true })}
                       </span>
-                    )}
-                    <h1 className="break-words font-display text-3xl font-semibold leading-tight tracking-tight md:text-4xl lg:text-5xl">
-                      {post.title}
-                    </h1>
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {post.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.7rem] font-medium uppercase tracking-wide text-muted-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground md:text-sm">
-                      <span className="flex items-center gap-1">
-                        <User className="h-4 w-4" />
-                        <Link
-                          to={`/author/${post.author_id}`}
-                          className="underline underline-offset-4 decoration-border/60 hover:decoration-primary"
-                        >
-                          {post.profiles.display_name}
-                        </Link>
+                      <span className="text-muted-foreground/40">·</span>
+                    </>
+                  )}
+                  {readingTimeMinutes && (
+                    <span>{readingTimeMinutes} min read</span>
+                  )}
+                </div>
+
+                {/* Tags */}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-xs text-muted-foreground"
+                      >
+                        {tag}
                       </span>
-                      {post.published_at && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          {formatDistanceToNow(new Date(post.published_at), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                      )}
-                      {readingTimeMinutes && (
-                        <span className="text-[0.7rem] uppercase tracking-wide text-muted-foreground md:text-xs">
-                          {readingTimeMinutes} min read
-                        </span>
-                      )}
-                    </div>
-                    <div className="pt-2">
-                      <ShareButtons title={post.title} />
-                    </div>
+                    ))}
                   </div>
+                )}
+
+                {/* Actions row */}
+                <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                  <ShareButtons title={post.title} />
+                  
                   {isAuthor && (
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+                    <div className="flex items-center gap-2">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => navigate(`/dashboard/edit/${post.id}`)}
-                        className="shrink-0 text-xs md:text-sm"
+                        className="gap-2 text-muted-foreground hover:text-foreground"
                       >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
+                        <Edit className="h-4 w-4" />
+                        <span className="hidden sm:inline">Edit</span>
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="shrink-0 text-xs text-destructive hover:text-destructive"
+                        className="gap-2 text-muted-foreground hover:text-destructive"
                         onClick={() => setIsDeleteOpen(true)}
                         disabled={deleteMutation.isPending}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        <Trash2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Delete</span>
                       </Button>
                     </div>
                   )}
                 </div>
               </header>
 
+              {/* Content */}
               <div id="post-content" className="post-prose">
                 <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
               </div>
 
-              <section className="mt-12 rounded-2xl border border-border/70 bg-gradient-to-br from-muted/60 to-muted/30 p-6 md:p-8 shadow-sm">
-                <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center gap-4 md:gap-5">
-                    <Avatar className="h-14 w-14 border-2 border-border/60 shadow-md md:h-16 md:w-16 ring-2 ring-primary/10">
-                      {post.profiles.avatar_url ? (
-                        <AvatarImage
-                          src={post.profiles.avatar_url}
-                          alt={post.profiles.display_name}
-                        />
-                      ) : (
-                        <AvatarFallback className="bg-primary/10 text-xs font-medium uppercase">
-                          {post.profiles.display_name.charAt(0)}
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
-                    <div className="space-y-1">
-                      <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                        About the author
+              {/* Author card */}
+              <footer className="mt-16 pt-8 border-t border-border/50">
+                <div className="flex items-start gap-4">
+                  <Avatar className="h-12 w-12 ring-2 ring-border">
+                    {post.profiles.avatar_url ? (
+                      <AvatarImage
+                        src={post.profiles.avatar_url}
+                        alt={post.profiles.display_name}
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-muted text-sm font-medium">
+                        {post.profiles.display_name.charAt(0)}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground mb-1">Written by</p>
+                    <Link
+                      to={`/author/${post.author_id}`}
+                      className="font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                      {post.profiles.display_name}
+                    </Link>
+                    {post.profiles.bio && (
+                      <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                        {post.profiles.bio}
                       </p>
-                      <Link
-                        to={`/author/${post.author_id}`}
-                        className="text-sm font-semibold tracking-tight underline-offset-4 hover:underline md:text-base"
-                      >
-                        {post.profiles.display_name}
-                      </Link>
-                      {post.profiles.bio && (
-                        <p className="max-w-xl text-xs text-muted-foreground md:text-sm">
-                          {post.profiles.bio}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-start gap-2 text-[0.7rem] text-muted-foreground md:items-end md:text-xs">
-                    <div className="flex flex-wrap gap-2">
+                    )}
+                    
+                    {/* Social links */}
+                    <div className="flex flex-wrap items-center gap-3 mt-3">
                       {post.profiles.website_url && (
                         <a
                           href={post.profiles.website_url.startsWith('http') ? post.profiles.website_url : `https://${post.profiles.website_url}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <Globe2 className="h-3.5 w-3.5" />
-                          <span>Website</span>
+                          <Globe2 className="h-4 w-4" />
                         </a>
                       )}
                       {post.profiles.twitter_handle && (
@@ -309,10 +303,9 @@ export default function Post() {
                           href={`https://twitter.com/${post.profiles.twitter_handle.replace(/^@/, '')}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <Twitter className="h-3.5 w-3.5" />
-                          <span>@{post.profiles.twitter_handle.replace(/^@/, '')}</span>
+                          <Twitter className="h-4 w-4" />
                         </a>
                       )}
                       {post.profiles.instagram_handle && (
@@ -320,10 +313,9 @@ export default function Post() {
                           href={`https://instagram.com/${post.profiles.instagram_handle.replace(/^@/, '')}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <Instagram className="h-3.5 w-3.5" />
-                          <span>@{post.profiles.instagram_handle.replace(/^@/, '')}</span>
+                          <Instagram className="h-4 w-4" />
                         </a>
                       )}
                       {post.profiles.tiktok_handle && (
@@ -331,30 +323,23 @@ export default function Post() {
                           href={`https://www.tiktok.com/@${post.profiles.tiktok_handle.replace(/^@/, '')}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <Music2 className="h-3.5 w-3.5" />
-                          <span>@{post.profiles.tiktok_handle.replace(/^@/, '')}</span>
+                          <Music2 className="h-4 w-4" />
                         </a>
                       )}
                     </div>
-                    <Link
-                      to={`/author/${post.author_id}`}
-                      className="text-xs font-medium text-primary hover:underline"
-                    >
-                      View more from {post.profiles.display_name} 
-                    </Link>
                   </div>
                 </div>
-              </section>
+              </footer>
 
+              {/* Delete dialog */}
               <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete this post?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently remove the post from your
-                      dashboard and public feed.
+                      This action cannot be undone. This will permanently remove the post.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -371,15 +356,10 @@ export default function Post() {
               </AlertDialog>
             </article>
           ) : (
-            <div className="py-12 text-center space-y-4">
+            <div className="py-20 text-center space-y-4">
               <p className="text-muted-foreground">Post not found</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="rounded-full px-4"
-              >
-                Back to feed
+              <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+                Go back
               </Button>
             </div>
           )}
