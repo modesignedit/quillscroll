@@ -1,4 +1,4 @@
-✍️ QuillScroll — UI-First Blogging Platform
+✍️ QuillScroll UI First Blogging Platform
 
 QuillScroll is a modern, mobile-first blogging platform designed for creators who value clean UI, readability, and focus.
 Built with a strong product mindset, it emphasizes writer experience, reader experience, and scalable architecture.
@@ -21,7 +21,7 @@ Built with a strong product mindset, it emphasizes writer experience, reader exp
 
 🌗 Dark / Light mode toggle
 
-📱 Fully mobile-first and responsive
+📱 Fully mobile first and responsive
 
 ⚡ Structured for scalability and future growth
 
@@ -77,7 +77,7 @@ Posts are written using Markdown
 
 Published posts appear in the public feed
 
-Readers enjoy a clean, mobile-optimized reading experience
+Readers enjoy a clean, mobile optimized reading experience
 
 UI adapts seamlessly across devices
 
@@ -98,7 +98,7 @@ Backend database integration
 👨‍💻 Author
 
 Moses Orji
-Vibe Coder | UI-First Full-Stack Builder
+Vibe Coder | UI First Full-Stack Builder
 
 GitHub: https://github.com/modesignedit
 
