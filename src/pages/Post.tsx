@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
@@ -7,10 +7,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowLeft, Calendar, User, Edit, Globe2, Instagram, Twitter, Music2 } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Edit, Globe2, Instagram, Twitter, Music2, Trash2 } from 'lucide-react';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
 import { useReadingProgress } from '@/hooks/use-reading-progress';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from '@/hooks/use-toast';
 
 interface Post {
   id: string;
@@ -35,6 +47,37 @@ export default function Post() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      if (!post) throw new Error('Post not loaded');
+      const { error } = await supabase.from('posts').delete().eq('id', post.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['post', id] });
+
+      toast({
+        title: 'Post deleted',
+        description: 'Your post was deleted successfully.',
+      });
+
+      setIsDeleteOpen(false);
+      navigate('/dashboard');
+    },
+    onError: (error) => {
+      console.error('Error deleting post', error);
+      toast({
+        title: 'Error deleting post',
+        description: 'Please try again.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const {
     data: post,
@@ -182,15 +225,27 @@ export default function Post() {
                     </div>
                   </div>
                   {isAuthor && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/dashboard/edit/${post.id}`)}
-                      className="shrink-0 text-xs md:text-sm"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/dashboard/edit/${post.id}`)}
+                        className="shrink-0 text-xs md:text-sm"
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="shrink-0 text-xs text-destructive hover:text-destructive"
+                        onClick={() => setIsDeleteOpen(true)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </div>
                   )}
                 </div>
               </header>
@@ -287,6 +342,28 @@ export default function Post() {
                   </div>
                 </div>
               </section>
+
+              <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently remove the post from your
+                      dashboard and public feed.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => deleteMutation.mutate()}
+                      disabled={deleteMutation.isPending}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </article>
           ) : (
             <div className="py-12 text-center space-y-4">
