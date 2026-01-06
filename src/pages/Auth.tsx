@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,14 +9,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useToast } from '@/hooks/use-toast';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
 });
 
 const signupSchema = loginSchema.extend({
-  displayName: z.string().min(2, 'Name must be at least 2 characters').max(50),
+  displayName: z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must be 50 characters or less'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -25,6 +31,8 @@ type SignupFormData = z.infer<typeof signupSchema>;
 export default function Auth() {
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
 
   const loginForm = useForm<LoginFormData>({
@@ -38,20 +46,49 @@ export default function Auth() {
   // Redirect if already authenticated
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      const redirect = searchParams.get('redirect');
+      const target = redirect && redirect !== '/auth' ? redirect : '/dashboard';
+      navigate(target, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, searchParams]);
 
   const handleLogin = async (data: LoginFormData) => {
-    await signIn(data.email, data.password);
+    const { error } = await signIn(data.email, data.password);
+
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Unable to sign in',
+        description:
+          error.message || 'Please check your email and password and try again.',
+      });
+      return;
+    }
+
+    const redirect = searchParams.get('redirect');
+    const target = redirect && redirect !== '/auth' ? redirect : '/dashboard';
+    navigate(target, { replace: true });
   };
 
   const handleSignup = async (data: SignupFormData) => {
     const { error } = await signUp(data.email, data.password, data.displayName);
-    if (!error) {
-      setActiveTab('login');
-      signupForm.reset();
+
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Unable to create account',
+        description: error.message || 'Please try again with a different email.',
+      });
+      return;
     }
+
+    toast({
+      title: 'Account created',
+      description: 'You can now sign in with your new account.',
+    });
+
+    setActiveTab('login');
+    signupForm.reset();
   };
 
   return (
