@@ -1,1 +1,4 @@
 project_id = "cusvakgrgcloixqljohm"
+
+[functions.ai-title-summary]
+verify_jwt = false
