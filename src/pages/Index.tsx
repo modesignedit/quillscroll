@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Layout } from '@/components/Layout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { Calendar, User, Search } from 'lucide-react';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { seedLovableDemoPosts } from '@/lib/demoPosts';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface Post {
   id: string;
@@ -22,6 +23,7 @@ interface Post {
   published_at: string | null;
   category: string | null;
   tags: string[];
+  author_id: string;
   profiles: {
     display_name: string;
   };
@@ -35,6 +37,7 @@ export default function Index() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: posts, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['posts'],
@@ -49,6 +52,7 @@ export default function Index() {
           published_at,
           category,
           tags,
+          author_id,
           profiles (
             display_name
           )
@@ -263,10 +267,22 @@ export default function Index() {
                         {post.title}
                       </CardTitle>
                       <CardDescription className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground md:text-xs">
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {post.profiles.display_name}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate(`/author/${post.author_id}`);
+                          }}
+                          className="inline-flex items-center gap-1 text-left hover:text-foreground"
+                        >
+                          <Avatar className="h-5 w-5 border border-border/60">
+                            <AvatarFallback className="bg-primary/10 text-[0.6rem] font-medium uppercase">
+                              {post.profiles.display_name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span>{post.profiles.display_name}</span>
+                        </button>
                         {post.published_at && (
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />

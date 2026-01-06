@@ -311,16 +311,31 @@ export default function ProfileSettings() {
                       />
                     </div>
 
-                    <CardFooter className="mt-4 flex items-center justify-end gap-3 px-0">
-                      {justSaved && !updateMutation.isPending && (
-                        <div className="flex items-center gap-1 text-xs text-emerald-500">
-                          <Check className="h-3 w-3" />
-                          <span>Saved</span>
-                        </div>
-                      )}
-                      <Button type="submit" disabled={updateMutation.isPending} className="hover-scale">
-                        {updateMutation.isPending ? "Saving..." : "Save changes"}
-                      </Button>
+                    <CardFooter className="mt-4 flex flex-col items-start justify-between gap-3 px-0 sm:flex-row sm:items-center">
+                      <div className="text-xs text-muted-foreground">
+                        {user?.id && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="px-0 text-xs font-medium text-primary hover:text-primary/90"
+                            onClick={() => window.open(`/author/${user.id}`, '_blank')}
+                          >
+                            View public author page 
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {justSaved && !updateMutation.isPending && (
+                          <div className="flex items-center gap-1 text-xs text-emerald-500">
+                            <Check className="h-3 w-3" />
+                            <span>Saved</span>
+                          </div>
+                        )}
+                        <Button type="submit" disabled={updateMutation.isPending} className="hover-scale">
+                          {updateMutation.isPending ? "Saving..." : "Save changes"}
+                        </Button>
+                      </div>
                     </CardFooter>
                   </form>
                 </Form>
