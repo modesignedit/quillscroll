@@ -1,7 +1,8 @@
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -67,11 +68,44 @@ export default function AuthorPage() {
 
   const isLoading = profileLoading || postsLoading;
 
+  const allTags = useMemo(() => {
+    if (!posts) return [] as string[];
+    const tagSet = new Set<string>();
+    posts.forEach((post) => {
+      post.tags?.forEach((tag) => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+  }, [posts]);
+
+  const allCategories = useMemo(() => {
+    if (!posts) return [] as string[];
+    const categorySet = new Set<string>();
+    posts.forEach((post) => {
+      if (post.category) categorySet.add(post.category);
+    });
+    return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+  }, [posts]);
+
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const filteredPosts = useMemo(() => {
+    if (!posts) return [] as PostSummary[];
+
+    return posts.filter((post) => {
+      const matchesTag = activeTag ? post.tags && post.tags.includes(activeTag) : true;
+      const matchesCategory = activeCategory ? post.category === activeCategory : true;
+      return matchesTag && matchesCategory;
+    });
+  }, [posts, activeTag, activeCategory]);
+
+  const isLoadingCombined = profileLoading || postsLoading;
+
   return (
     <Layout>
       <div className="container px-3 sm:px-4 py-6 sm:py-8">
         <div className="mx-auto max-w-4xl space-y-8">
-          {isLoading ? (
+          {isLoadingCombined ? (
             <div className="space-y-6">
               <Skeleton className="h-8 w-2/3" />
               <Skeleton className="h-4 w-1/2" />
@@ -188,33 +222,119 @@ export default function AuthorPage() {
                     </div>
                   </div>
                 </div>
-                {posts && posts.length > 0 && (
-                  <p className="text-[0.7rem] font-medium uppercase tracking-[0.25em] text-muted-foreground">
-                    Posts by {profile.display_name}
-                  </p>
+                {filteredPosts && filteredPosts.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground md:text-xs">
+                    {allCategories.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                          Categories
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setActiveCategory(null)}
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
+                            activeCategory === null
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                          }`}
+                        >
+                          All
+                        </button>
+                        {allCategories.map((category) => (
+                          <button
+                            key={category}
+                            type="button"
+                            onClick={() =>
+                              setActiveCategory((current) =>
+                                current === category ? null : category
+                              )
+                            }
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
+                              activeCategory === category
+                                ? 'border-primary bg-primary text-primary-foreground'
+                                : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                            }`}
+                          >
+                            {category}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {allTags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                          Tags
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTag(null)}
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
+                            activeTag === null
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                          }`}
+                        >
+                          All
+                        </button>
+                        {allTags.map((tag) => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() =>
+                              setActiveTag((current) => (current === tag ? null : tag))
+                            }
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition ${
+                              activeTag === tag
+                                ? 'border-primary bg-primary text-primary-foreground'
+                                : 'border-border/60 bg-muted/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                            }`}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
               </header>
 
-              {posts && posts.length > 0 ? (
+              {filteredPosts && filteredPosts.length > 0 ? (
                 <div className="grid gap-5 md:grid-cols-2">
-                  {posts.map((post) => (
+                  {filteredPosts.map((post) => (
                     <Link key={post.id} to={`/post/${post.id}`}>
                       <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg">
                         <CardHeader className="space-y-2">
                           {post.category && (
-                            <span className="mb-1 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setActiveCategory((current) =>
+                                  current === post.category ? null : post.category
+                                );
+                              }}
+                              className="mb-1 inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+                            >
                               {post.category}
-                            </span>
+                            </button>
                           )}
                           {post.tags && post.tags.length > 0 && (
                             <div className="mb-1 flex flex-wrap gap-1.5">
                               {post.tags.map((tag) => (
-                                <span
+                                <button
                                   key={tag}
-                                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground"
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setActiveTag((current) => (current === tag ? null : tag));
+                                  }}
+                                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-2.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
                                 >
                                   {tag}
-                                </span>
+                                </button>
                               ))}
                             </div>
                           )}
