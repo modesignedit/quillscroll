@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { seedLovableDemoPosts } from '@/lib/demoPosts';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { WelcomeBanner } from '@/components/WelcomeBanner';
 
 interface Post {
   id: string;
@@ -83,6 +84,15 @@ export default function Index() {
     return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
   }, [posts]);
 
+  // Find the Getting Started guide for the welcome banner
+  const gettingStartedSlug = useMemo(() => {
+    if (!posts) return undefined;
+    const guide = posts.find(
+      (post) => post.tags?.includes('getting-started') || post.title.toLowerCase().includes('getting started')
+    );
+    return guide?.id;
+  }, [posts]);
+
   const filteredPosts = useMemo(() => {
     if (!posts) return [] as Post[];
 
@@ -115,6 +125,8 @@ export default function Index() {
               Discover stories, thinking, and expertise from writers on any topic.
             </p>
           </div>
+
+          <WelcomeBanner gettingStartedSlug={gettingStartedSlug} />
 
           {/* Pulse brand/about section */}
           <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-left text-xs sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:text-sm animate-fade-in">
