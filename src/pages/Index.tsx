@@ -127,13 +127,13 @@ export default function Index() {
 
   return (
     <Layout>
-      <div className="container px-3 sm:px-4 py-6 sm:py-8">
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div className="space-y-3 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+      <div className="container px-3 sm:px-4 py-8 sm:py-12">
+        <div className="mx-auto max-w-4xl space-y-10">
+          <div className="space-y-4 text-center animate-fade-in">
+            <h1 className="font-display text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
               Latest Posts
             </h1>
-            <p className="mx-auto max-w-2xl text-sm text-muted-foreground md:text-base">
+            <p className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg">
               Discover stories, thinking, and expertise from writers on any topic.
             </p>
           </div>
@@ -141,27 +141,27 @@ export default function Index() {
           <WelcomeBanner gettingStartedSlug={gettingStartedSlug} />
 
           {/* Pulse brand/about section */}
-          <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-left text-xs sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:text-sm animate-fade-in">
-            <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background/80 text-sm text-primary">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-gradient-to-br from-muted/60 to-muted/30 px-5 py-4 text-left sm:flex-row sm:items-center sm:justify-between sm:gap-4 animate-slide-up shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-background/80 text-lg text-primary shadow-sm">
                 <span>✒︎</span>
               </div>
-              <div className="space-y-0.5">
-                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="space-y-1">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
                   About Pulse
                 </p>
-                <p className="text-xs font-medium sm:text-sm">
+                <p className="text-sm font-semibold sm:text-base font-display">
                   A quill-and-scroll home for modern creators.
                 </p>
-                <p className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                <p className="text-xs text-muted-foreground sm:text-sm">
                   Pulse is a focused creator blog platform where you draft, publish, and share your best writing in a calm, distraction-free space.
                 </p>
               </div>
             </div>
             <Button
               type="button"
-              size="sm"
-              className="mt-1 inline-flex rounded-full px-4 text-xs font-medium sm:mt-0 hover-scale"
+              size="default"
+              className="mt-2 inline-flex rounded-full px-6 font-medium sm:mt-0"
               onClick={() => navigate(user ? '/dashboard/new' : '/auth')}
             >
               {user ? 'Start writing' : 'Sign up to write'}
@@ -293,11 +293,11 @@ export default function Index() {
               ))}
             </div>
           ) : filteredPosts && filteredPosts.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {filteredPosts.map((post) => (
+            <div className="grid gap-5 md:grid-cols-2">
+              {filteredPosts.map((post, index) => (
                 <Link key={post.id} to={`/post/${post.id}`}>
-                  <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg">
-                    <CardHeader className="space-y-2 px-3 py-3 md:px-4 md:py-4">
+                  <Card className="group h-full transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-primary/30" style={{ animationDelay: `${index * 50}ms` }}>
+                    <CardHeader className="space-y-2.5 px-4 py-4 md:px-5 md:py-5">
                       {post.category && (
                         <button
                           type="button"
@@ -331,10 +331,10 @@ export default function Index() {
                           ))}
                         </div>
                       )}
-                      <CardTitle className="line-clamp-2 text-sm font-semibold md:text-base">
+                      <CardTitle className="line-clamp-2 text-base font-semibold font-display md:text-lg group-hover:text-primary transition-colors">
                         {post.title}
                       </CardTitle>
-                      <CardDescription className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground md:text-xs">
+                      <CardDescription className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <AuthorCard
                           authorId={post.author_id}
                           displayName={post.profiles.display_name}
