@@ -41,7 +41,7 @@ interface Post {
     twitter_handle: string | null;
     instagram_handle: string | null;
     tiktok_handle: string | null;
-  };
+  } | null;
 }
 
 export default function Post() {
@@ -192,7 +192,7 @@ export default function Post() {
                     to={`/author/${post.author_id}`}
                     className="font-medium text-foreground hover:text-primary transition-colors"
                   >
-                    {post.profiles.display_name}
+                    {post.profiles?.display_name ?? 'Anonymous'}
                   </Link>
                   <span className="text-muted-foreground/40">·</span>
                   {post.published_at && (
@@ -261,14 +261,14 @@ export default function Post() {
               <footer className="mt-16 pt-8 border-t border-border/50">
                 <div className="flex items-start gap-4">
                   <Avatar className="h-12 w-12 ring-2 ring-border">
-                    {post.profiles.avatar_url ? (
+                    {post.profiles?.avatar_url ? (
                       <AvatarImage
                         src={post.profiles.avatar_url}
-                        alt={post.profiles.display_name}
+                        alt={post.profiles?.display_name ?? 'Author'}
                       />
                     ) : (
                       <AvatarFallback className="bg-muted text-sm font-medium">
-                        {post.profiles.display_name.charAt(0)}
+                        {post.profiles?.display_name?.charAt(0) ?? 'A'}
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -278,57 +278,59 @@ export default function Post() {
                       to={`/author/${post.author_id}`}
                       className="font-semibold text-foreground hover:text-primary transition-colors"
                     >
-                      {post.profiles.display_name}
+                      {post.profiles?.display_name ?? 'Anonymous'}
                     </Link>
-                    {post.profiles.bio && (
+                    {post.profiles?.bio && (
                       <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
                         {post.profiles.bio}
                       </p>
                     )}
                     
                     {/* Social links */}
-                    <div className="flex flex-wrap items-center gap-3 mt-3">
-                      {post.profiles.website_url && (
-                        <a
-                          href={post.profiles.website_url.startsWith('http') ? post.profiles.website_url : `https://${post.profiles.website_url}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <Globe2 className="h-4 w-4" />
-                        </a>
-                      )}
-                      {post.profiles.twitter_handle && (
-                        <a
-                          href={`https://twitter.com/${post.profiles.twitter_handle.replace(/^@/, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <Twitter className="h-4 w-4" />
-                        </a>
-                      )}
-                      {post.profiles.instagram_handle && (
-                        <a
-                          href={`https://instagram.com/${post.profiles.instagram_handle.replace(/^@/, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <Instagram className="h-4 w-4" />
-                        </a>
-                      )}
-                      {post.profiles.tiktok_handle && (
-                        <a
-                          href={`https://www.tiktok.com/@${post.profiles.tiktok_handle.replace(/^@/, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <Music2 className="h-4 w-4" />
-                        </a>
-                      )}
-                    </div>
+                    {post.profiles && (
+                      <div className="flex flex-wrap items-center gap-3 mt-3">
+                        {post.profiles.website_url && (
+                          <a
+                            href={post.profiles.website_url.startsWith('http') ? post.profiles.website_url : `https://${post.profiles.website_url}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <Globe2 className="h-4 w-4" />
+                          </a>
+                        )}
+                        {post.profiles.twitter_handle && (
+                          <a
+                            href={`https://twitter.com/${post.profiles.twitter_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <Twitter className="h-4 w-4" />
+                          </a>
+                        )}
+                        {post.profiles.instagram_handle && (
+                          <a
+                            href={`https://instagram.com/${post.profiles.instagram_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <Instagram className="h-4 w-4" />
+                          </a>
+                        )}
+                        {post.profiles.tiktok_handle && (
+                          <a
+                            href={`https://www.tiktok.com/@${post.profiles.tiktok_handle.replace(/^@/, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <Music2 className="h-4 w-4" />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </footer>
