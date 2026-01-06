@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowLeft, Calendar, User, Edit, Globe2, Instagram, Twitter, Music2, Trash2 } from 'lucide-react';
+import { ShareButtons } from '@/components/ShareButtons';
 import { getReadingTimeMinutes } from '@/lib/readingTime';
 import { useReadingProgress } from '@/hooks/use-reading-progress';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -222,6 +223,9 @@ export default function Post() {
                           {readingTimeMinutes} min read
                         </span>
                       )}
+                    </div>
+                    <div className="pt-2">
+                      <ShareButtons title={post.title} />
                     </div>
                   </div>
                   {isAuthor && (
