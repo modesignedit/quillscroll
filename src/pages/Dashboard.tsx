@@ -14,6 +14,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { seedLovableDemoPosts } from '@/lib/demoPosts';
+
 interface DashboardPost {
   id: string;
   title: string;
@@ -21,16 +22,16 @@ interface DashboardPost {
   updated_at: string;
   slug: string;
 }
+
 export default function Dashboard() {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [isSeedingDemo, setIsSeedingDemo] = useState(false);
+
   const {
     data: posts,
     isLoading,
@@ -40,17 +41,17 @@ export default function Dashboard() {
   } = useQuery({
     queryKey: ['user-posts', user?.id],
     queryFn: async () => {
-      const {
-        data,
-        error
-      } = await supabase.from('posts').select('id, title, is_published, updated_at, slug').eq('author_id', user!.id).order('updated_at', {
-        ascending: false
-      });
+      const { data, error } = await supabase
+        .from('posts')
+        .select('id, title, is_published, updated_at, slug')
+        .eq('author_id', user!.id)
+        .order('updated_at', { ascending: false });
       if (error) throw error;
       return data as DashboardPost[];
     },
     enabled: !!user
   });
+
   const {
     data: profile,
     isLoading: isProfileLoading,
@@ -61,23 +62,27 @@ export default function Dashboard() {
     queryKey: ['my-profile', user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const {
-        data,
-        error
-      } = await supabase.from('profiles').select('display_name, avatar_url, website_url, twitter_handle, instagram_handle, tiktok_handle').eq('id', user!.id).maybeSingle();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url, website_url, twitter_handle, instagram_handle, tiktok_handle')
+        .eq('id', user!.id)
+        .maybeSingle();
       if (error) throw error;
       return data;
     }
   });
+
   const totalPosts = posts?.length ?? 0;
   const publishedPosts = posts?.filter(post => post.is_published)?.length ?? 0;
   const draftPosts = totalPosts - publishedPosts;
   const lastUpdatedAt = posts?.[0]?.updated_at ?? null;
   const recentPosts = (posts ?? []).slice(0, 5);
+
   const hasCompletedProfile = !!profile && (profile.display_name?.trim().length ?? 0) >= 2;
   const hasWrittenFirstPost = totalPosts > 0;
   const hasLoadedDemoPosts = (posts ?? []).some(post => post.slug?.startsWith('lovable-demo-'));
   const allOnboardingDone = hasCompletedProfile && hasWrittenFirstPost && hasLoadedDemoPosts;
+
   const visiblePosts = [...(posts ?? [])].filter(post => {
     if (statusFilter === 'published') return post.is_published;
     if (statusFilter === 'draft') return !post.is_published;
@@ -87,17 +92,14 @@ export default function Dashboard() {
     const bTime = new Date(b.updated_at).getTime();
     return sortOrder === 'desc' ? bTime - aTime : aTime - bTime;
   });
+
   const deleteMutation = useMutation({
     mutationFn: async (postId: string) => {
-      const {
-        error
-      } = await supabase.from('posts').delete().eq('id', postId);
+      const { error } = await supabase.from('posts').delete().eq('id', postId);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['user-posts']
-      });
+      queryClient.invalidateQueries({ queryKey: ['user-posts'] });
       toast.success('Post deleted successfully');
       setDeletePostId(null);
     },
@@ -105,6 +107,7 @@ export default function Dashboard() {
       toast.error('Failed to delete post');
     }
   });
+
   const handleSeedDemoPosts = async () => {
     if (!user) return;
     try {
@@ -114,12 +117,8 @@ export default function Dashboard() {
         toast.success('Demo posts already loaded');
       } else {
         toast.success('Demo posts added');
-        queryClient.invalidateQueries({
-          queryKey: ['user-posts']
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['posts']
-        });
+        queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
       }
     } catch (error) {
       console.error('Error seeding demo posts from dashboard', error);
@@ -128,7 +127,9 @@ export default function Dashboard() {
       setIsSeedingDemo(false);
     }
   };
-  return <Layout>
+
+  return (
+    <Layout>
       <div className="container px-3 sm:px-4 py-8 md:py-12">
         <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between animate-fade-in">
@@ -146,7 +147,8 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          {!allOnboardingDone && <Card className="border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent shadow-sm animate-slide-up">
+          {!allOnboardingDone && (
+            <Card className="border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent shadow-sm animate-slide-up">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base font-semibold tracking-tight font-display sm:text-lg">
                   Get set up in a few steps
@@ -160,7 +162,11 @@ export default function Dashboard() {
                   {/* Complete profile */}
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      {hasCompletedProfile ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
+                      {hasCompletedProfile ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground" />
+                      )}
                       <div className="flex flex-col">
                         <span className="text-xs font-medium sm:text-sm">Complete your profile</span>
                         <span className="text-[0.7rem] text-muted-foreground sm:text-xs">
@@ -168,15 +174,27 @@ export default function Dashboard() {
                         </span>
                       </div>
                     </div>
-                    {!hasCompletedProfile && <Button type="button" variant="outline" size="sm" onClick={() => navigate('/settings')} className="rounded-full px-3 text-xs">
+                    {!hasCompletedProfile && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/settings')}
+                        className="rounded-full px-3 text-xs"
+                      >
                         Edit profile
-                      </Button>}
+                      </Button>
+                    )}
                   </div>
 
                   {/* Write first post */}
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      {hasWrittenFirstPost ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
+                      {hasWrittenFirstPost ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground" />
+                      )}
                       <div className="flex flex-col">
                         <span className="text-xs font-medium sm:text-sm">Write your first post</span>
                         <span className="text-[0.7rem] text-muted-foreground sm:text-xs">
@@ -184,19 +202,24 @@ export default function Dashboard() {
                         </span>
                       </div>
                     </div>
-                    {!hasWrittenFirstPost && <Button type="button" size="sm" onClick={() => navigate('/dashboard/new')} className="rounded-full px-3 text-xs">
+                    {!hasWrittenFirstPost && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/new')}
+                        className="rounded-full px-3 text-xs"
+                      >
                         Start writing
-                      </Button>}
+                      </Button>
+                    )}
                   </div>
-
-                  {/* Load demo posts */}
-                  
                 </div>
               </CardContent>
-            </Card>}
+            </Card>
+          )}
 
-
-          {isProfileLoading ? <Card className="border-border/70 bg-card/50 shadow-sm">
+          {isProfileLoading ? (
+            <Card className="border-border/70 bg-card/50 shadow-sm">
               <CardContent className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
                 <Skeleton className="h-11 w-11 rounded-full sm:h-12 sm:w-12" />
                 <div className="flex-1 space-y-2">
@@ -204,30 +227,42 @@ export default function Dashboard() {
                   <Skeleton className="h-3 w-48" />
                 </div>
               </CardContent>
-            </Card> : isProfileError ? <Card className="border-border/70 bg-card/50 shadow-sm">
+            </Card>
+          ) : isProfileError ? (
+            <Card className="border-border/70 bg-card/50 shadow-sm">
               <CardContent className="flex flex-col items-start justify-between gap-3 px-3 py-3 sm:flex-row sm:items-center sm:px-4 sm:py-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">We couldnt load your profile.</p>
+                  <p className="text-sm font-medium">We couldn't load your profile.</p>
                   <p className="text-[0.8rem] text-muted-foreground">
                     Please check your connection and try again.
                   </p>
-                  {/* Optional debug info:
-                   <p className="text-[0.7rem] text-muted-foreground/70">
-                    {profileError instanceof Error ? profileError.message : 'Unexpected error.'}
-                   </p>
-                   */}
                 </div>
-                <Button type="button" variant="outline" size="sm" onClick={() => refetchProfile()} className="rounded-full px-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetchProfile()}
+                  className="rounded-full px-4"
+                >
                   Retry
                 </Button>
               </CardContent>
-            </Card> : profile ? <Card className="border-border/70 bg-card/50 shadow-sm">
+            </Card>
+          ) : profile ? (
+            <Card className="border-border/70 bg-card/50 shadow-sm">
               <CardContent className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-4">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <Avatar className="h-11 w-11 border border-border/60 shadow-sm sm:h-12 sm:w-12">
-                    {profile.avatar_url ? <AvatarImage src={profile.avatar_url} alt={profile.display_name || user?.email || 'Author avatar'} /> : <AvatarFallback className="bg-primary/10 text-xs font-medium uppercase sm:text-sm">
+                    {profile.avatar_url ? (
+                      <AvatarImage
+                        src={profile.avatar_url}
+                        alt={profile.display_name || user?.email || 'Author avatar'}
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-primary/10 text-xs font-medium uppercase sm:text-sm">
                         {(profile.display_name || user?.email || '?').charAt(0)}
-                      </AvatarFallback>}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                   <div className="space-y-1">
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -244,141 +279,180 @@ export default function Dashboard() {
 
                 <div className="flex flex-col items-start gap-2 sm:items-end">
                   {(() => {
-                const website = profile.website_url?.trim();
-                const twitter = profile.twitter_handle?.trim();
-                const instagram = profile.instagram_handle?.trim();
-                const tiktok = profile.tiktok_handle?.trim();
-                let href: string | null = null;
-                let label: string | null = null;
-                let Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | null = null;
-                if (website) {
-                  const normalized = website.startsWith('http') ? website : `https://${website}`;
-                  href = normalized;
-                  try {
-                    const url = new URL(normalized);
-                    label = url.hostname.replace('www.', '');
-                  } catch {
-                    label = website;
-                  }
-                  Icon = Globe2;
-                } else if (twitter) {
-                  const handle = twitter.replace(/^@/, '');
-                  href = `https://twitter.com/${handle}`;
-                  label = `@${handle}`;
-                  Icon = Twitter;
-                } else if (instagram) {
-                  const handle = instagram.replace(/^@/, '');
-                  href = `https://instagram.com/${handle}`;
-                  label = `@${handle}`;
-                  Icon = Instagram;
-                } else if (tiktok) {
-                  const handle = tiktok.replace(/^@/, '');
-                  href = `https://www.tiktok.com/@${handle}`;
-                  label = `@${handle}`;
-                  Icon = Music2;
-                }
-                if (!href || !label || !Icon) {
-                  return <div className="text-[0.7rem] text-muted-foreground sm:text-xs">
+                    const website = profile.website_url?.trim();
+                    const twitter = profile.twitter_handle?.trim();
+                    const instagram = profile.instagram_handle?.trim();
+                    const tiktok = profile.tiktok_handle?.trim();
+                    let href: string | null = null;
+                    let label: string | null = null;
+                    let Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | null = null;
+
+                    if (website) {
+                      const normalized = website.startsWith('http') ? website : `https://${website}`;
+                      href = normalized;
+                      try {
+                        const url = new URL(normalized);
+                        label = url.hostname.replace('www.', '');
+                      } catch {
+                        label = website;
+                      }
+                      Icon = Globe2;
+                    } else if (twitter) {
+                      const handle = twitter.replace(/^@/, '');
+                      href = `https://twitter.com/${handle}`;
+                      label = `@${handle}`;
+                      Icon = Twitter;
+                    } else if (instagram) {
+                      const handle = instagram.replace(/^@/, '');
+                      href = `https://instagram.com/${handle}`;
+                      label = `@${handle}`;
+                      Icon = Instagram;
+                    } else if (tiktok) {
+                      const handle = tiktok.replace(/^@/, '');
+                      href = `https://www.tiktok.com/@${handle}`;
+                      label = `@${handle}`;
+                      Icon = Music2;
+                    }
+
+                    if (!href || !label || !Icon) {
+                      return (
+                        <div className="text-[0.7rem] text-muted-foreground sm:text-xs">
                           No public links yet.{' '}
-                          <button type="button" onClick={() => navigate('/settings')} className="underline underline-offset-4 hover:text-foreground">
+                          <button
+                            type="button"
+                            onClick={() => navigate('/settings')}
+                            className="underline underline-offset-4 hover:text-foreground"
+                          >
                             Add your website or socials.
                           </button>
-                        </div>;
-                }
-                return <div className="flex flex-col items-start gap-1 text-[0.7rem] text-muted-foreground sm:items-end sm:text-xs">
-                        <span className="uppercase tracking-[0.16em]">
-                          Primary link
-                        </span>
-                        <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-[0.7rem] font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-background hover:text-primary sm:text-xs">
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="flex flex-col items-start gap-1 text-[0.7rem] text-muted-foreground sm:items-end sm:text-xs">
+                        <span className="uppercase tracking-[0.16em]">Primary link</span>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-[0.7rem] font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-background hover:text-primary sm:text-xs"
+                        >
                           <Icon className="h-3.5 w-3.5" />
-                          <span className="truncate max-w-[180px] sm:max-w-[220px]">
-                            {label}
-                          </span>
+                          <span className="truncate max-w-[180px] sm:max-w-[220px]">{label}</span>
                         </a>
-                      </div>;
-              })()}
+                      </div>
+                    );
+                  })()}
                 </div>
               </CardContent>
-            </Card> : null}
+            </Card>
+          ) : null}
 
           {/* Recent posts overview */}
-          <Card className="border-border/70 bg-card shadow-sm animate-slide-up" style={{
-          animationDelay: '100ms'
-        }}>
+          <Card
+            className="border-border/70 bg-card shadow-sm animate-slide-up"
+            style={{ animationDelay: '100ms' }}
+          >
             <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base font-semibold tracking-tight font-display sm:text-lg">
                   Recent posts
                 </CardTitle>
                 <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                  A quick glance at what youve been working on lately.
+                  Your recent drafts and published posts.
                 </CardDescription>
               </div>
             </CardHeader>
             <CardContent>
-              {isLoading ? <div className="space-y-2">
+              {isLoading ? (
+                <div className="space-y-2">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-4/5" />
                   <Skeleton className="h-4 w-3/5" />
-                </div> : isPostsError ? <p className="text-xs text-destructive sm:text-sm">
-                  We couldnt load your recent posts.
-                </p> : !recentPosts.length ? <p className="text-xs text-muted-foreground sm:text-sm">
-                  You dont have any posts yet. Create your first post to see it here.
-                </p> : <ul className="space-y-2">
-                  {recentPosts.map(post => <li key={post.id} className="flex items-center justify-between gap-3 rounded-md border border-border/60 bg-card/60 px-3 py-2 text-xs sm:text-sm">
+                </div>
+              ) : isPostsError ? (
+                <p className="text-xs text-destructive sm:text-sm">
+                  We couldn't load your recent posts.
+                </p>
+              ) : !recentPosts.length ? (
+                <p className="text-xs text-muted-foreground sm:text-sm">
+                  You don't have any posts yet. Create your first post to see it here.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {recentPosts.map(post => (
+                    <li
+                      key={post.id}
+                      className="flex items-center justify-between gap-3 rounded-md border border-border/60 bg-card/60 px-3 py-2 text-xs sm:text-sm"
+                    >
                       <div className="min-w-0">
-                        <button type="button" onClick={() => navigate(`/dashboard/edit/${post.id}`)} className="line-clamp-1 font-medium hover:underline">
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/dashboard/edit/${post.id}`)}
+                          className="line-clamp-1 font-medium hover:underline"
+                        >
                           {post.title || 'Untitled post'}
                         </button>
                         <p className="mt-0.5 text-[0.7rem] text-muted-foreground sm:text-xs">
                           Updated{' '}
-                          {post.updated_at ? formatDistanceToNow(new Date(post.updated_at), {
-                      addSuffix: true
-                    }) : 'recently'}
+                          {post.updated_at
+                            ? formatDistanceToNow(new Date(post.updated_at), { addSuffix: true })
+                            : 'recently'}
                         </p>
                       </div>
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-medium ${post.is_published ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-medium ${
+                          post.is_published
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
                         {post.is_published ? 'Published' : 'Draft'}
                       </span>
-                    </li>)}
-                </ul>}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </CardContent>
           </Card>
- 
-           {!isLoading && posts && posts.length > 0 && <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                     Total posts
-                   </p>
-                   <p className="mt-1 text-xl font-semibold sm:text-2xl">{totalPosts}</p>
-                 </CardContent>
-               </Card>
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                     Published / Drafts
-                   </p>
-                   <p className="mt-1 text-xl font-semibold sm:text-2xl">
-                     {publishedPosts}
-                     <span className="mx-1 text-sm text-muted-foreground">/</span>
-                     {draftPosts}
-                   </p>
-                 </CardContent>
-               </Card>
-               <Card className="border-border/60 bg-card/60 shadow-sm">
-                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                     Last updated
-                   </p>
-                   <p className="mt-1 text-sm text-muted-foreground">
-                     {lastUpdatedAt ? formatDistanceToNow(new Date(lastUpdatedAt), {
-                  addSuffix: true
-                }) : 'No posts yet'}
-                   </p>
-                 </CardContent>
-               </Card>
-             </div>}
+
+          {!isLoading && posts && posts.length > 0 && (
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Total posts
+                  </p>
+                  <p className="mt-1 text-xl font-semibold sm:text-2xl">{totalPosts}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Published / Drafts
+                  </p>
+                  <p className="mt-1 text-xl font-semibold sm:text-2xl">
+                    {publishedPosts}
+                    <span className="mx-1 text-sm text-muted-foreground">/</span>
+                    {draftPosts}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/60 bg-card/60 shadow-sm">
+                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                    Last updated
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {lastUpdatedAt
+                      ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
+                      : 'No posts yet'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           <Card className="border-border/70 bg-card/40 shadow-sm">
             <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -393,7 +467,11 @@ export default function Dashboard() {
               <div className="flex flex-wrap items-center gap-2 text-[0.7rem] text-muted-foreground sm:text-xs">
                 <div className="flex items-center gap-2">
                   <span className="uppercase tracking-[0.16em]">Status</span>
-                  <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as 'all' | 'published' | 'draft')} className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring">
+                  <select
+                    value={statusFilter}
+                    onChange={e => setStatusFilter(e.target.value as 'all' | 'published' | 'draft')}
+                    className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
                     <option value="all">All</option>
                     <option value="published">Published</option>
                     <option value="draft">Drafts</option>
@@ -401,112 +479,153 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="uppercase tracking-[0.16em]">Sort</span>
-                  <select value={sortOrder} onChange={e => setSortOrder(e.target.value as 'desc' | 'asc')} className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring">
+                  <select
+                    value={sortOrder}
+                    onChange={e => setSortOrder(e.target.value as 'desc' | 'asc')}
+                    className="rounded-lg border border-border bg-background/80 px-2 py-1 text-[0.7rem] sm:text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
                     <option value="desc">Newest first</option>
                     <option value="asc">Oldest first</option>
                   </select>
                 </div>
               </div>
             </CardHeader>
-          <CardContent>
-            {isLoading ? <div className="space-y-4">
-                {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full" />)}
-              </div> : isPostsError ? <div className="py-10 text-center space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  We couldnt load your posts. Please check your connection and try again.
-                </p>
-                <Button type="button" variant="outline" size="sm" onClick={() => refetchPosts()} className="rounded-full px-4">
-                  Retry
-                </Button>
-                {/* Optional debug info:
-                 <p className="text-[0.7rem] text-muted-foreground/70">
-                  {postsError instanceof Error ? postsError.message : 'Unexpected error.'}
-                 </p>
-                 */}
-              </div> : posts && posts.length > 0 ? visiblePosts.length > 0 ? <div className="overflow-hidden rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-b border-border/60">
-                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          Title
-                        </TableHead>
-                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          Status
-                        </TableHead>
-                        <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          Last Updated
-                        </TableHead>
-                        <TableHead className="text-right text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          Actions
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {visiblePosts.map(post => <TableRow key={post.id} className="border-b border-border/40 last:border-0">
-                          <TableCell className="py-3 align-middle text-sm font-medium md:text-base">
-                            {post.title}
-                          </TableCell>
-                          <TableCell className="py-3 align-middle">
-                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${post.is_published ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                              {post.is_published ? 'Published' : 'Draft'}
-                            </span>
-                          </TableCell>
-                          <TableCell className="py-3 align-middle text-[0.7rem] text-muted-foreground sm:text-xs md:text-sm">
-                            {formatDistanceToNow(new Date(post.updated_at), {
-                        addSuffix: true
-                      })}
-                          </TableCell>
-                          <TableCell className="py-3 align-middle text-right">
-                            <div className="flex justify-end gap-1.5 sm:gap-2">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => navigate(`/dashboard/edit/${post.id}`)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => setDeletePostId(post.id)} className="h-8 w-8 text-destructive hover:text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>)}
-                    </TableBody>
-                  </Table>
-                </div> : <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <p className="text-muted-foreground mb-2">No posts match your filters</p>
-                  <Button variant="outline" size="sm" onClick={() => {
-                setStatusFilter('all');
-                setSortOrder('desc');
-              }}>
-                    Reset filters
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : isPostsError ? (
+                <div className="py-10 text-center space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    We couldn't load your posts. Please check your connection and try again.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => refetchPosts()}
+                    className="rounded-full px-4"
+                  >
+                    Retry
                   </Button>
-                </div> : <div className="flex flex-col items-center justify-center py-12 text-center">
-                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">
-                  You haven't created any posts yet
-                </p>
-                <Button onClick={() => navigate('/dashboard/new')}>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Create your first post
-                </Button>
-              </div>}
-          </CardContent>
-        </Card>
+                </div>
+              ) : posts && posts.length > 0 ? (
+                visiblePosts.length > 0 ? (
+                  <div className="overflow-hidden rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-b border-border/60">
+                          <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            Status
+                          </TableHead>
+                          <TableHead className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            Last Updated
+                          </TableHead>
+                          <TableHead className="text-right text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            Actions
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {visiblePosts.map(post => (
+                          <TableRow key={post.id} className="border-b border-border/40 last:border-0">
+                            <TableCell className="py-3 align-middle text-sm font-medium md:text-base">
+                              {post.title}
+                            </TableCell>
+                            <TableCell className="py-3 align-middle">
+                              <span
+                                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  post.is_published
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'bg-muted text-muted-foreground'
+                                }`}
+                              >
+                                {post.is_published ? 'Published' : 'Draft'}
+                              </span>
+                            </TableCell>
+                            <TableCell className="py-3 align-middle text-[0.7rem] text-muted-foreground sm:text-xs md:text-sm">
+                              {formatDistanceToNow(new Date(post.updated_at), { addSuffix: true })}
+                            </TableCell>
+                            <TableCell className="py-3 align-middle text-right">
+                              <div className="flex justify-end gap-1.5 sm:gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  onClick={() => navigate(`/dashboard/edit/${post.id}`)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setDeletePostId(post.id)}
+                                  className="h-8 w-8 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <p className="text-muted-foreground mb-2">No posts match your filters</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setStatusFilter('all');
+                        setSortOrder('desc');
+                      }}
+                    >
+                      Reset filters
+                    </Button>
+                  </div>
+                )
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground mb-4">You haven't created any posts yet</p>
+                  <Button onClick={() => navigate('/dashboard/new')}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Create your first post
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
 
-    <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete post?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your post.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => deletePostId && deleteMutation.mutate(deletePostId)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  </Layout>;
+      <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your post.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deletePostId && deleteMutation.mutate(deletePostId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Layout>
+  );
 }
