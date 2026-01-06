@@ -236,7 +236,7 @@ export default function Index() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center gap-3 py-10 text-center">
                 <p className="text-sm text-muted-foreground">
-                  We couldnt load the latest posts. Please check your connection and try again.
+                  We couldn't load the latest posts. Please check your connection and try again.
                 </p>
                 <Button
                   type="button"
