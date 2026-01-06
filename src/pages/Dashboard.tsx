@@ -101,7 +101,8 @@ export default function Dashboard() {
   const publishedPosts = posts?.filter((post) => post.is_published)?.length ?? 0;
   const draftPosts = totalPosts - publishedPosts;
   const lastUpdatedAt = posts?.[0]?.updated_at ?? null;
-
+  const recentPosts = (posts ?? []).slice(0, 5);
+ 
   const hasCompletedProfile = !!profile && (profile.display_name?.trim().length ?? 0) >= 2;
   const hasWrittenFirstPost = totalPosts > 0;
   const hasLoadedDemoPosts = (posts ?? []).some((post) => post.slug?.startsWith('lovable-demo-'));
@@ -421,42 +422,107 @@ export default function Dashboard() {
             </Card>
           ) : null}
 
-          {!isLoading && posts && posts.length > 0 && (
-            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
-              <Card className="border-border/60 bg-card/60 shadow-sm">
-                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                    Total posts
-                  </p>
-                  <p className="mt-1 text-xl font-semibold sm:text-2xl">{totalPosts}</p>
-                </CardContent>
-              </Card>
-              <Card className="border-border/60 bg-card/60 shadow-sm">
-                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                    Published / Drafts
-                  </p>
-                  <p className="mt-1 text-xl font-semibold sm:text-2xl">
-                    {publishedPosts}
-                    <span className="mx-1 text-sm text-muted-foreground">/</span>
-                    {draftPosts}
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="border-border/60 bg-card/60 shadow-sm">
-                <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
-                  <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                    Last updated
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {lastUpdatedAt
-                      ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
-                      : 'No posts yet'}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          {/* Recent posts overview */}
+          <Card className="border-border/70 bg-card/40 shadow-sm">
+            <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <CardTitle className="text-sm font-semibold tracking-tight sm:text-base">
+                  Recent posts
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                  A quick glance at what youve been working on lately.
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-4/5" />
+                  <Skeleton className="h-4 w-3/5" />
+                </div>
+              ) : isPostsError ? (
+                <p className="text-xs text-destructive sm:text-sm">
+                  We couldnt load your recent posts.
+                </p>
+              ) : !recentPosts.length ? (
+                <p className="text-xs text-muted-foreground sm:text-sm">
+                  You dont have any posts yet. Create your first post to see it here.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {recentPosts.map((post) => (
+                    <li
+                      key={post.id}
+                      className="flex items-center justify-between gap-3 rounded-md border border-border/60 bg-card/60 px-3 py-2 text-xs sm:text-sm"
+                    >
+                      <div className="min-w-0">
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/dashboard/edit/${post.id}`)}
+                          className="line-clamp-1 font-medium hover:underline"
+                        >
+                          {post.title || 'Untitled post'}
+                        </button>
+                        <p className="mt-0.5 text-[0.7rem] text-muted-foreground sm:text-xs">
+                          Updated{' '}
+                          {post.updated_at
+                            ? formatDistanceToNow(new Date(post.updated_at), { addSuffix: true })
+                            : 'recently'}
+                        </p>
+                      </div>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-medium ${
+                          post.is_published
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {post.is_published ? 'Published' : 'Draft'}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+ 
+           {!isLoading && posts && posts.length > 0 && (
+             <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                     Total posts
+                   </p>
+                   <p className="mt-1 text-xl font-semibold sm:text-2xl">{totalPosts}</p>
+                 </CardContent>
+               </Card>
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                     Published / Drafts
+                   </p>
+                   <p className="mt-1 text-xl font-semibold sm:text-2xl">
+                     {publishedPosts}
+                     <span className="mx-1 text-sm text-muted-foreground">/</span>
+                     {draftPosts}
+                   </p>
+                 </CardContent>
+               </Card>
+               <Card className="border-border/60 bg-card/60 shadow-sm">
+                 <CardContent className="px-3 py-3 sm:px-4 sm:py-4">
+                   <p className="text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
+                     Last updated
+                   </p>
+                   <p className="mt-1 text-sm text-muted-foreground">
+                     {lastUpdatedAt
+                       ? formatDistanceToNow(new Date(lastUpdatedAt), { addSuffix: true })
+                       : 'No posts yet'}
+                   </p>
+                 </CardContent>
+               </Card>
+             </div>
+           )}
 
           <Card className="border-border/70 bg-card/40 shadow-sm">
             <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
