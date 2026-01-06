@@ -44,6 +44,17 @@ export default function Auth() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
+  // Reset Google loading state when user returns to window (e.g., after closing OAuth popup)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (isGoogleLoading) {
+        setIsGoogleLoading(false);
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [isGoogleLoading]);
+
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });

@@ -141,7 +141,7 @@ export default function Dashboard() {
                 Track your posts, drafts, and publishing flow.
               </p>
             </div>
-            <Button onClick={() => navigate('/dashboard/new')} size="lg" className="mt-2 sm:mt-0 shadow-md">
+            <Button onClick={() => navigate('/dashboard/new')} size="lg" className="mt-2 sm:mt-0 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
               <PlusCircle className="mr-2 h-5 w-5" />
               New Post
             </Button>

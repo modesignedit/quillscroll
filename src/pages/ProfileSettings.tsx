@@ -270,7 +270,7 @@ export default function ProfileSettings() {
     <Layout>
       <div className="container py-8 md:py-12">
         <div className="mx-auto max-w-2xl">
-          <Card className="animate-fade-in">
+          <Card className="animate-fade-in rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl md:text-3xl">Edit Profile</CardTitle>
               <CardDescription>Update your public author profile and social links.</CardDescription>
@@ -306,7 +306,7 @@ export default function ProfileSettings() {
                         <FormItem>
                           <FormLabel>Avatar URL</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://images.example.com/you.png" {...field} />
+                            <Input placeholder="https://images.example.com/you.png" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -320,7 +320,7 @@ export default function ProfileSettings() {
                         <FormItem>
                           <FormLabel>Display name</FormLabel>
                           <FormControl>
-                            <Input placeholder="How should we credit you?" {...field} />
+                            <Input placeholder="How should we credit you?" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -340,7 +340,7 @@ export default function ProfileSettings() {
                             <FormControl>
                               <Textarea
                                 placeholder="Short bio that appears on your author page."
-                                className="min-h-[80px]"
+                                className="min-h-[80px] rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
                                 {...field}
                               />
                             </FormControl>
@@ -363,7 +363,7 @@ export default function ProfileSettings() {
                         <FormItem>
                           <FormLabel>Website</FormLabel>
                           <FormControl>
-                            <Input placeholder="yourdomain.com or https://yourdomain.com" {...field} />
+                            <Input placeholder="yourdomain.com or https://yourdomain.com" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                           </FormControl>
                           <div className="mt-1 text-xs text-muted-foreground">
                             Shown as a globe icon on your author page and opens in a new tab.
@@ -381,7 +381,7 @@ export default function ProfileSettings() {
                           <FormItem>
                             <FormLabel>Twitter</FormLabel>
                             <FormControl>
-                              <Input placeholder="@handle" {...field} />
+                              <Input placeholder="@handle" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                             </FormControl>
                             <div className="mt-1 text-xs text-muted-foreground">
                               We’ll link to twitter.com/yourhandle and show a Twitter chip on your author page.
@@ -397,7 +397,7 @@ export default function ProfileSettings() {
                           <FormItem>
                             <FormLabel>Instagram</FormLabel>
                             <FormControl>
-                              <Input placeholder="@handle" {...field} />
+                              <Input placeholder="@handle" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                             </FormControl>
                             <div className="mt-1 text-xs text-muted-foreground">
                               We’ll link to instagram.com/yourhandle and show an Instagram chip.
@@ -413,7 +413,7 @@ export default function ProfileSettings() {
                           <FormItem>
                             <FormLabel>TikTok</FormLabel>
                             <FormControl>
-                              <Input placeholder="@handle" {...field} />
+                              <Input placeholder="@handle" className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors" {...field} />
                             </FormControl>
                             <div className="mt-1 text-xs text-muted-foreground">
                               We’ll link to tiktok.com/@yourhandle and show a TikTok-style chip.
@@ -445,7 +445,7 @@ export default function ProfileSettings() {
                             <span>Saved</span>
                           </div>
                         )}
-                        <Button type="submit" disabled={updateMutation.isPending} className="hover-scale">
+                        <Button type="submit" disabled={updateMutation.isPending} className="rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
                           {updateMutation.isPending ? "Saving..." : "Save changes"}
                         </Button>
                       </div>
@@ -457,7 +457,7 @@ export default function ProfileSettings() {
           </Card>
 
           {/* Security - Password Change */}
-          <Card className="mt-8 animate-fade-in">
+          <Card className="mt-8 animate-fade-in rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Lock className="h-5 w-5" />
@@ -481,7 +481,7 @@ export default function ProfileSettings() {
                             <Input
                               type={showCurrentPassword ? "text" : "password"}
                               placeholder="Enter your current password"
-                              className="h-12 rounded-xl pr-10"
+                              className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
                               {...field}
                             />
                             <Button
@@ -515,7 +515,7 @@ export default function ProfileSettings() {
                             <Input
                               type={showNewPassword ? "text" : "password"}
                               placeholder="Enter your new password"
-                              className="h-12 rounded-xl pr-10"
+                              className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
                               {...field}
                             />
                             <Button
@@ -552,7 +552,7 @@ export default function ProfileSettings() {
                             <Input
                               type={showConfirmPassword ? "text" : "password"}
                               placeholder="Confirm your new password"
-                              className="h-12 rounded-xl pr-10"
+                              className="h-12 rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors pr-10"
                               {...field}
                             />
                             <Button
@@ -578,7 +578,7 @@ export default function ProfileSettings() {
                   <Button
                     type="submit"
                     disabled={isChangingPassword}
-                    className="mt-4 gap-2"
+                    className="mt-4 gap-2 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
                   >
                     <Lock className="h-4 w-4" />
                     {isChangingPassword ? "Updating..." : "Update Password"}
@@ -589,7 +589,7 @@ export default function ProfileSettings() {
           </Card>
 
           {/* Danger Zone - Account Deletion */}
-          <Card className="mt-8 border-destructive/30 animate-fade-in">
+          <Card className="mt-8 border-destructive/30 animate-fade-in rounded-2xl bg-card/80 backdrop-blur-sm shadow-xl">
             <CardHeader>
               <CardTitle className="text-xl text-destructive flex items-center gap-2">
                 <Trash2 className="h-5 w-5" />
@@ -602,7 +602,7 @@ export default function ProfileSettings() {
             <CardContent>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="gap-2">
+                  <Button variant="destructive" className="gap-2 rounded-xl shadow-lg shadow-destructive/20 hover:shadow-xl hover:shadow-destructive/30 transition-all">
                     <Trash2 className="h-4 w-4" />
                     Delete Account
                   </Button>
