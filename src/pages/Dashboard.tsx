@@ -14,6 +14,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { seedLovableDemoPosts } from '@/lib/demoPosts';
+import { DashboardSkeleton } from '@/components/DashboardSkeleton';
 
 interface DashboardPost {
   id: string;
@@ -127,6 +128,19 @@ export default function Dashboard() {
       setIsSeedingDemo(false);
     }
   };
+
+  // Show full skeleton when initial data is loading
+  if (isLoading && isProfileLoading) {
+    return (
+      <Layout>
+        <div className="container px-3 sm:px-4 py-8 md:py-12">
+          <div className="max-w-6xl mx-auto">
+            <DashboardSkeleton />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
